@@ -1,0 +1,576 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>你该辞职，还是该休息？· 打工人透支与去留深度测评</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='20' fill='%23060818'/%3E%3Ctext x='50' y='68' font-size='52' text-anchor='middle'%3E%F0%9F%9A%AA%3C/text%3E%3C/svg%3E">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --glass: rgba(255,255,255,0.08);
+      --border: rgba(255,255,255,0.15);
+      --text: #fff;
+      --muted: rgba(255,255,255,0.68);
+      --grad: linear-gradient(135deg, #22d3ee, #818cf8, #e879f9);
+      --gold: #fbbf24;
+    }
+    html { -webkit-tap-highlight-color: transparent; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+      min-height: 100dvh; color: var(--text); background: #060818;
+      display: flex; justify-content: center; overflow-x: hidden;
+    }
+    .aurora { position: fixed; inset: 0; z-index: 0; overflow: hidden;
+      background: linear-gradient(160deg, #060818 0%, #0f1035 35%, #1a0a3a 65%, #2d0a2e 100%); }
+    .aurora .blob { position: absolute; border-radius: 50%; filter: blur(90px); opacity: 0.55; }
+    .blob-a { width: 80vw; height: 80vw; top: -22%; left: -20%; background: radial-gradient(circle, #1d4ed8, transparent 70%); }
+    .blob-b { width: 70vw; height: 70vw; bottom: -20%; right: -15%; background: radial-gradient(circle, #7e22ce, transparent 70%); }
+    .blob-c { width: 55vw; height: 55vw; top: 38%; left: 28%; background: radial-gradient(circle, rgba(236,72,153,.45), transparent 70%); }
+    .app { position: relative; z-index: 1; width: 100%; max-width: 480px; min-height: 100dvh;
+      display: flex; flex-direction: column; padding: 0 16px 36px; }
+    .glass {
+      background: var(--glass); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+      border: 1px solid var(--border); border-radius: 20px;
+      box-shadow: 0 8px 32px rgba(99,102,241,.22), inset 0 1px 0 rgba(255,255,255,.1);
+    }
+    .page-header { text-align: center; padding: 20px 14px 12px; }
+    .badge-top { display: inline-block; background: rgba(251,191,36,0.18); color: #fcd34d; border: 1px solid rgba(251,191,36,0.4);
+      font-size: 0.72rem; font-weight: 700; padding: 3px 12px; border-radius: 999px; margin-bottom: 8px; }
+    .page-header h1 { font-size: 1.25rem; font-weight: 800; margin-bottom: 6px; line-height: 1.35; }
+    .page-header h1 span { color: var(--gold); }
+    .page-header p { font-size: 0.78rem; color: var(--muted); }
+    .quiz-view { flex: 1; display: flex; flex-direction: column; padding-top: 6px; }
+    .quiz-view.hidden { display: none; }
+    .scene-badge { text-align: center; font-size: 0.8rem; font-weight: 600; color: #c4b5fd; margin-bottom: 6px; }
+    .scene-intro { text-align: center; font-size: 0.78rem; color: var(--muted); margin-bottom: 12px; padding: 0 8px; }
+    .q-card { flex: 1; display: flex; flex-direction: column; padding: 22px 16px 18px; margin-bottom: 14px; min-height: 360px; }
+    .q-text { font-size: 1.05rem; font-weight: 700; line-height: 1.5; text-align: center; margin-bottom: 18px; }
+    .opts { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; flex: 1; align-content: start; }
+    .opts.cols-1 { grid-template-columns: 1fr; }
+    .opt {
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      padding: 13px 10px; border-radius: 14px; background: rgba(255,255,255,0.05);
+      border: 1.5px solid rgba(255,255,255,0.12); cursor: pointer; text-align: center;
+      transition: all .18s ease; user-select: none; min-height: 70px;
+    }
+    .opt:hover { background: rgba(255,255,255,0.1); }
+    .opt.selected {
+      background: linear-gradient(135deg, rgba(34,211,238,0.22), rgba(168,85,247,0.28));
+      border-color: #38bdf8; box-shadow: 0 0 18px rgba(56,189,248,.35);
+    }
+    .opt-emoji { font-size: 1.35rem; margin-bottom: 4px; }
+    .opt-label { font-size: 0.83rem; font-weight: 600; line-height: 1.35; }
+    .quiz-tip { text-align: center; font-size: 0.74rem; color: var(--muted); margin-top: 12px; }
+    .dots-wrap { display: flex; justify-content: center; gap: 5px; margin-bottom: 12px; flex-wrap: wrap; }
+    .dot { width: 8px; height: 8px; border-radius: 50%; background: rgba(255,255,255,0.18); transition: all .25s; }
+    .dot.done { background: rgba(52,211,153,0.7); }
+    .dot.active { width: 20px; border-radius: 99px; background: var(--grad); }
+    .nav-bar { display: flex; gap: 10px; }
+    .btn {
+      flex: 1; padding: 13px 16px; border-radius: 14px; border: 1px solid var(--border);
+      background: rgba(255,255,255,0.07); color: #fff; font-size: 0.9rem; font-weight: 600;
+      cursor: pointer; transition: all .2s;
+    }
+    .btn:disabled { opacity: 0.35; cursor: not-allowed; }
+    .btn-primary { background: var(--grad); border: none; box-shadow: 0 4px 18px rgba(129,140,248,.4); }
+    .analyzing { display: none; text-align: center; padding: 48px 20px; margin: auto 0; }
+    .analyzing.show { display: block; }
+    .crystal { font-size: 3rem; margin-bottom: 14px; animation: pulse 1s infinite alternate; }
+    @keyframes pulse { to { transform: scale(1.15); } }
+    .result-view { display: none; padding-top: 6px; }
+    .result-view.show { display: block; }
+    .result-hero { text-align: center; padding: 24px 18px; margin-bottom: 14px; }
+    .ring-wrap { position: relative; width: 132px; height: 132px; margin: 0 auto 10px; }
+    .ring-wrap svg { width: 100%; height: 100%; transform: rotate(-90deg); }
+    .ring-bg { fill: none; stroke: rgba(255,255,255,0.1); stroke-width: 9; }
+    .ring-fg { fill: none; stroke-width: 9; stroke-linecap: round; transition: stroke-dashoffset 1s ease; }
+    .ring-num-wrap { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+    .ring-num { font-size: 2.2rem; font-weight: 900; line-height: 1; }
+    .ring-sub { font-size: 0.72rem; color: var(--muted); margin-top: 4px; }
+    .verdict-main { font-size: 1.2rem; font-weight: 800; margin: 8px 0; }
+    .verdict-fun { display: inline-block; padding: 4px 14px; border-radius: 999px; font-size: 0.82rem; font-weight: 700; margin-bottom: 10px; }
+    .rx-card {
+      text-align: left; padding: 18px; margin-bottom: 14px;
+      background: linear-gradient(135deg, rgba(251,191,36,0.16), rgba(236,72,153,0.14));
+      border: 1.5px solid rgba(251,191,36,0.45); border-radius: 20px;
+    }
+    .rx-tag { display: inline-block; font-size: 0.72rem; font-weight: 800; background: #fbbf24; color: #1e1b4b; padding: 2px 10px; border-radius: 99px; margin-bottom: 8px; }
+    .rx-title { font-size: 1.1rem; font-weight: 800; color: #fde68a; margin-bottom: 8px; line-height: 1.4; }
+    .rx-desc { font-size: 0.85rem; color: rgba(255,255,255,0.9); line-height: 1.65; margin-bottom: 10px; }
+    .rx-list { list-style: none; font-size: 0.82rem; line-height: 1.6; }
+    .rx-list li { padding: 4px 0; color: #fef3c7; }
+    .section { padding: 18px; margin-bottom: 14px; }
+    .section h3 { font-size: 0.96rem; font-weight: 700; margin-bottom: 12px; }
+    .radar-box { width: 100%; height: 270px; display: flex; justify-content: center; align-items: center; }
+    .radar-box canvas { width: 100%; height: 100%; }
+    .dim-row { margin-bottom: 10px; }
+    .dim-head { display: flex; justify-content: space-between; font-size: 0.82rem; margin-bottom: 5px; }
+    .bar-track { height: 8px; background: rgba(255,255,255,0.1); border-radius: 99px; overflow: hidden; }
+    .bar-fill { height: 100%; width: 0; border-radius: 99px; transition: width .9s ease; }
+    .insights-list { list-style: none; font-size: 0.84rem; line-height: 1.65; }
+    .insights-list li { padding: 8px 0; border-bottom: 1px solid rgba(255,255,255,0.08); }
+    .insights-list li:last-child { border-bottom: none; }
+    .resign-box { white-space: pre-wrap; font-size: 0.83rem; line-height: 1.7; background: rgba(0,0,0,0.28); padding: 14px; border-radius: 12px; border: 1px dashed rgba(255,255,255,0.2); }
+    .gift-card {
+      padding: 16px; margin-bottom: 14px; border-radius: 18px;
+      background: linear-gradient(135deg, rgba(52,211,153,0.16), rgba(56,189,248,0.16));
+      border: 1px solid rgba(52,211,153,0.45); font-size: 0.83rem; line-height: 1.6;
+    }
+    .gift-card strong { color: #6ee7b7; display: block; font-size: 0.92rem; margin-bottom: 4px; }
+    .btn-block { width: 100%; padding: 14px; border-radius: 14px; border: none; font-size: 0.92rem; font-weight: 700; cursor: pointer; margin-bottom: 10px; color: #fff; }
+    .btn-share { background: var(--grad); }
+    .btn-retest { background: rgba(255,255,255,0.1); border: 1px solid var(--border); }
+    .toast { position: fixed; bottom: 26px; left: 50%; transform: translateX(-50%); background: rgba(15,23,42,0.95);
+      border: 1px solid var(--border); padding: 10px 20px; border-radius: 999px; font-size: 0.82rem; opacity: 0; pointer-events: none; transition: opacity .25s; z-index: 99; }
+    .toast.show { opacity: 1; }
+  </style>
+</head>
+<body>
+  <div class="aurora">
+    <div class="blob blob-a"></div>
+    <div class="blob blob-b"></div>
+    <div class="blob blob-c"></div>
+  </div>
+  <div class="app">
+    <header class="page-header">
+      <div class="badge-top">打工人状态深度测试</div>
+      <h1>你该辞职，还是该<span>休息</span>？</h1>
+      <p>测测你想逃离的，到底是工作，还是透支后的自己</p>
+    </header>
+
+    <div class="quiz-view" id="quizView">
+      <div class="scene-badge" id="sceneBadge"></div>
+      <div class="scene-intro" id="sceneIntro"></div>
+      <div class="q-card glass" id="qCard">
+        <div class="q-text" id="qText"></div>
+        <div class="opts" id="opts"></div>
+        <div class="quiz-tip" id="quizTip"></div>
+      </div>
+      <div class="dots-wrap" id="dotsWrap"></div>
+      <div class="nav-bar">
+        <button class="btn" id="btnPrev">← 上一题</button>
+        <button class="btn btn-primary" id="btnNext">下一题 →</button>
+      </div>
+    </div>
+
+    <div class="analyzing glass" id="analyzing">
+      <div class="crystal">🔮</div>
+      <p id="analyzingText">正在交叉比对【工作环境毒性】与【身心透支指数】...</p>
+    </div>
+
+    <div class="result-view" id="resultView">
+      <div class="result-hero glass">
+        <div class="ring-wrap">
+          <svg viewBox="0 0 120 120">
+            <circle class="ring-bg" cx="60" cy="60" r="52"></circle>
+            <circle class="ring-fg" id="resultRing" cx="60" cy="60" r="52" stroke="#34d399" stroke-dasharray="326.73" stroke-dashoffset="326.73"></circle>
+          </svg>
+          <div class="ring-num-wrap">
+            <div class="ring-num" id="resultScore">0</div>
+            <div class="ring-sub">职场存活指数</div>
+          </div>
+        </div>
+        <div class="verdict-main" id="verdictMain"></div>
+        <span class="verdict-fun" id="verdictFun"></span>
+        <div style="font-size:0.8rem;color:var(--muted);margin-top:4px" id="benchmark"></div>
+      </div>
+
+      <div class="rx-card" id="rxCard">
+        <span class="rx-tag">核心诊断处方：你该辞职还是该休息？</span>
+        <div class="rx-title" id="rxTitle"></div>
+        <div class="rx-desc" id="rxDesc"></div>
+        <ul class="rx-list" id="rxList"></ul>
+      </div>
+
+      <div class="section glass">
+        <h3>📡 五维透支与回报雷达</h3>
+        <div class="radar-box"><canvas id="radarCanvas"></canvas></div>
+      </div>
+
+      <div class="section glass">
+        <h3>📊 五大维度健康度（越高越健康）</h3>
+        <div id="dimBars"></div>
+      </div>
+
+      <div class="section glass">
+        <h3>🔥 深度交叉诊断</h3>
+        <ul class="insights-list" id="insights"></ul>
+      </div>
+
+      <div class="section glass">
+        <h3 id="letterHeading">🎭 给领导 / HR 的信（可一键复制）</h3>
+        <div class="resign-box" id="resignLetter"></div>
+      </div>
+
+      <div class="gift-card">
+        <strong>🎁 专属隐藏福利：10 合 1 人生状态测评合集</strong>
+        截图本页雷达图报告 + 订单确认收货 10 字好评，发给店铺客服即可免费领取价值 19.9 元的《全套打工人搞钱天赋 · 内耗指数 · 裸辞自救测评合集》！
+      </div>
+
+      <button class="btn-block btn-share" id="btnCopyAll">📤 复制诊断摘要与给 HR 的信</button>
+      <button class="btn-block btn-retest" id="btnRetest">🔄 重新测试</button>
+    </div>
+  </div>
+  <div class="toast" id="toast"></div>
+
+<script>
+(function () {
+  'use strict';
+  const SCENES = [
+    { id: 'money',  icon: '💰', name: '经济回报', qRange: [0, 3],  intro: '第 1 步：先看钱给得够不够，值不值得你受委屈' },
+    { id: 'time',   icon: '⏰', name: '体力透支', qRange: [4, 7],  intro: '第 2 步：看看你的身体和时间是不是已经被掏空' },
+    { id: 'growth', icon: '📈', name: '发展前景', qRange: [8, 11], intro: '第 3 步：留下来的每一天，是在升值还是在贬值' },
+    { id: 'social', icon: '🤝', name: '环境毒性', qRange: [12, 15], intro: '第 4 步：消耗你的是工作本身，还是身边的人' },
+    { id: 'mental', icon: '❤️', name: '心理电量', qRange: [16, 19], intro: '第 5 步：听听你内心的真实警报声' }
+  ];
+
+  const QUESTIONS = [
+    { text: '你现在的税前月薪在当地属于什么水平？', options: [
+      { emoji: '🚀', label: '3万以上 / 远超同行', score: 5 }, { emoji: '💰', label: '1.5万-3万 / 很体面', score: 3 },
+      { emoji: '📊', label: '8千-1.5万 / 比上不足', score: 1 }, { emoji: '💸', label: '5千-8千 / 刚够温饱', score: -2 },
+      { emoji: '🥀', label: '5千以下 / 贴钱上班', score: -5 }
+    ]},
+    { text: '年终奖和绩效兑现情况如何？', options: [
+      { emoji: '🎉', label: '丰厚且准时发（3个月以上）', score: 5 }, { emoji: '📦', label: '有1-2个月，还算稳定', score: 2 },
+      { emoji: '📁', label: '看老板心情，只有一点点', score: -2 }, { emoji: '😤', label: '纯画大饼，一分没有', score: -5 }
+    ]},
+    { text: '公司五险一金和福利保障怎么样？', options: [
+      { emoji: '🏅', label: '全额顶格交，福利齐全', score: 4 }, { emoji: '⚖️', label: '按实际工资正常交', score: 2 },
+      { emoji: '📉', label: '按最低基数交，抠抠搜搜', score: -2 }, { emoji: '💔', label: '没公积金甚至社保都不全', score: -6 }
+    ]},
+    { text: '你最近一次涨薪是什么时候？', options: [
+      { emoji: '📈', label: '半年到一年内刚涨过', score: 4 }, { emoji: '⏳', label: '一两年没动过了', score: -1 },
+      { emoji: '😰', label: '三年以上没涨过', score: -4 }, { emoji: '💀', label: '不但没涨，还降薪/克扣了', score: -7 }
+    ]},
+    { text: '你每天实际在公司工作多久？', options: [
+      { emoji: '🌅', label: '8小时以内，到点就走', score: 4 }, { emoji: '🌃', label: '8-9小时，偶尔加一下', score: 1 },
+      { emoji: '🌙', label: '10小时左右，常态加班', score: -3 }, { emoji: '🔥', label: '12小时以上，把公司当家', score: -7 }
+    ]},
+    { text: '每天单程通勤要花多久？', options: [
+      { emoji: '🚶', label: '30分钟以内，很轻松', score: 3 }, { emoji: '🚇', label: '30-60分钟，还能接受', score: 0 },
+      { emoji: '🚗', label: '1-1.5小时，每天像春运', score: -3 }, { emoji: '✈️', label: '单程1.5小时以上，路上就累垮', score: -6 }
+    ]},
+    { text: '周末或放假休息两天后，你能缓过来吗？', options: [
+      { emoji: '⚡', label: '睡一觉就满血复活了', score: 4 }, { emoji: '😮‍💨', label: '勉强恢复一半电量', score: 0 },
+      { emoji: '🥀', label: '放假只想躺尸，根本缓不过来', score: -4 }, { emoji: '💣', label: '周日晚上就开始心悸失眠', score: -6 }
+    ]},
+    { text: '加班有加班费或能痛快调休吗？', options: [
+      { emoji: '💰', label: '给足加班费或随时能调休', score: 4 }, { emoji: '📅', label: '能调休但请假要看脸色', score: -1 },
+      { emoji: '😤', label: '纯用爱发电，免费义务加班', score: -5 }
+    ]},
+    { text: '现在的工作能让你学到值钱的本事吗？', options: [
+      { emoji: '🧠', label: '能攒下核心经验和作品', score: 4 }, { emoji: '📖', label: '偶尔能学一点，不算多', score: 1 },
+      { emoji: '🔄', label: '纯打杂重复劳动，原地踏步', score: -3 }, { emoji: '🧟', label: '每天都在废掉武功，越干越不值钱', score: -6 }
+    ]},
+    { text: '在这家公司还有晋升或涨薪的盼头吗？', options: [
+      { emoji: '🪜', label: '通道清晰，干得好真能升', score: 4 }, { emoji: '🏔️', label: '有机会但一个萝卜一个坑', score: 0 },
+      { emoji: '🧱', label: '一眼望到头，完全没位置', score: -4 }, { emoji: '🎭', label: '全是皇亲国戚/画饼大师', score: -6 }
+    ]},
+    { text: '公司的业务和经营状况目前稳不稳？', options: [
+      { emoji: '🏆', label: '业务很稳，现金流充裕', score: 4 }, { emoji: '📊', label: '不温不火，勉强维持', score: 0 },
+      { emoji: '📉', label: '一直在走下坡路，缩减开支', score: -4 }, { emoji: '💥', label: '已经在裁员或拖欠报销/工资', score: -7 }
+    ]},
+    { text: '如果现在出去找工作，这份履历加分吗？', options: [
+      { emoji: '✨', label: '很加分，猎头/同行都认', score: 4 }, { emoji: '😐', label: '普通经历，不好不坏', score: 1 },
+      { emoji: '🕳️', label: '待久了反而更难跳槽', score: -5 }
+    ]},
+    { text: '你直属领导的管理风格是怎样的？', options: [
+      { emoji: '🌟', label: '拎得清、能扛事、尊重人', score: 5 }, { emoji: '⚖️', label: '不管不问，互不打扰也挺好', score: 2 },
+      { emoji: '🔍', label: '微操狂魔，屁大点事都要盯', score: -3 }, { emoji: '😤', label: '甩锅侠 + PUA打压 + 情绪巨婴', score: -7 }
+    ]},
+    { text: '你和周围同事相处的氛围如何？', options: [
+      { emoji: '🤗', label: '氛围挺好，有能吐槽的搭子', score: 4 }, { emoji: '😶', label: '君子之交，各干各的没矛盾', score: 1 },
+      { emoji: '🐍', label: '小团体勾心斗角，到处甩锅', score: -5 }
+    ]},
+    { text: '公司的规章制度和考核合理吗？', options: [
+      { emoji: '🌈', label: '尊重人性，看结果不搞形式主义', score: 4 }, { emoji: '📋', label: '规矩多点，但还能忍', score: 0 },
+      { emoji: '🐺', label: '抓考勤、写日报、开无效大会折腾人', score: -5 }
+    ]},
+    { text: '在公司有没有受过明显的委屈或不公？', options: [
+      { emoji: '✅', label: '基本没有，还算公平', score: 3 }, { emoji: '⚠️', label: '受过几次委屈，心里有疙瘩', score: -2 },
+      { emoji: '🚨', label: '经常背黑锅/被穿小鞋，憋屈到极点', score: -6 }
+    ]},
+    { text: '下班后微信工作群响一声，你的反应是？', options: [
+      { emoji: '🏖️', label: '下班基本没人找，安心过日子', score: 4 }, { emoji: '📱', label: '偶尔回一句，不算烦', score: 1 },
+      { emoji: '😰', label: '一听到提示音就生理性心慌烦躁', score: -4 }, { emoji: '💀', label: '24小时待命，连洗澡都在看工作群', score: -7 }
+    ]},
+    { text: '最近三个月，你的身体发出了什么信号？', options: [
+      { emoji: '💪', label: '吃嘛嘛香，身体没啥毛病', score: 4 }, { emoji: '🥱', label: '经常疲惫犯困，提不起劲', score: -1 },
+      { emoji: '🔥', label: '失眠、掉发、肠胃不舒服或焦虑易怒', score: -4 }, { emoji: '💔', label: '已经查出指标异常，身体在亮红灯', score: -7 }
+    ]},
+    { text: '每天早上闹钟响起要去上班那一刻，你在想什么？', options: [
+      { emoji: '☀️', label: '正常起床搬砖，没太大情绪', score: 3 }, { emoji: '🛌', label: '好想请假再睡三天，真的好累', score: -2 },
+      { emoji: '🌧️', label: '一想到要去公司就胸闷、想吐、抗拒', score: -6 }
+    ]},
+    { text: '如果现在给你放7天带薪假，你觉得回来后还会想辞职吗？', options: [
+      { emoji: '🧘', label: '歇够了应该就能继续干下去', score: 3 }, { emoji: '🤔', label: '能缓一阵子，但迟早还是想走', score: -1 },
+      { emoji: '🏃', label: '放一个月假也没用，我是一秒都不想再看见这家公司', score: -6 }
+    ]}
+  ];
+  const TIERS = [
+    { min: 80, title: '神仙养老岗！打死也别走！', fun: '🏆 职场天选之子', color: '#34d399' },
+    { min: 65, title: '整体很稳，属于优质饭碗', fun: '🧘 稳健搬砖人', color: '#6ee7b7' },
+    { min: 50, title: '食之无味弃之可惜，先苟住', fun: '🐴 骑驴找马选手', color: '#fbbf24' },
+    { min: 35, title: '严重透支警报！急需停机回血', fun: '🔋 电量1%打工人', color: '#fb923c' },
+    { min: 20, title: '快逃！这份工作正在吸干你', fun: '🏃 跑路预备役', color: '#f97316' },
+    { min: 0,  title: '这不是上班，这是渡劫坐牢！', fun: '💀 职场濒危物种', color: '#ef4444' }
+  ];
+
+  const SCENE_LIMITS = {
+    money:  { min: -5.75, max: 4.5 },
+    time:   { min: -6.0,  max: 3.75 },
+    growth: { min: -6.0,  max: 4.0 },
+    social: { min: -5.75, max: 4.0 },
+    mental: { min: -6.5,  max: 3.5 }
+  };
+
+  const BAR_COLORS = ['#818cf8', '#22d3ee', '#a78bfa', '#f472b6', '#fb7185'];
+  const TOTAL_Q = 20;
+  const RING_C = 2 * Math.PI * 52;
+  let currentQ = 0;
+  let answers = new Array(TOTAL_Q).fill(null);
+
+  function qScore(qi) { return answers[qi] === null ? 0 : QUESTIONS[qi].options[answers[qi]].score; }
+  function rawTotal() { return answers.reduce((s, _, i) => s + qScore(i), 0); }
+  function toPercent(raw) { return Math.max(0, Math.min(100, Math.round(((raw + 120) / 201) * 100))); }
+  function getTier(pct) { return TIERS.find(t => pct >= t.min) || TIERS[TIERS.length - 1]; }
+  function getScene(qi) { return SCENES.find(s => qi >= s.qRange[0] && qi <= s.qRange[1]); }
+
+  function sceneToTen(scene) {
+    let sum = 0;
+    for (let i = scene.qRange[0]; i <= scene.qRange[1]; i++) sum += qScore(i);
+    const avg = sum / 4;
+    const lim = SCENE_LIMITS[scene.id];
+    const v = ((avg - lim.min) / (lim.max - lim.min)) * 9 + 1;
+    return Math.max(1, Math.min(10, Math.round(v * 10) / 10));
+  }
+
+  function renderDots() {
+    document.getElementById('dotsWrap').innerHTML = Array.from({ length: TOTAL_Q }, (_, i) =>
+      `<div class="dot ${i === currentQ ? 'active' : answers[i] !== null ? 'done' : ''}"></div>`
+    ).join('');
+  }
+
+  function renderQuestion() {
+    const q = QUESTIONS[currentQ];
+    const scene = getScene(currentQ);
+    document.getElementById('sceneBadge').textContent = `${scene.icon} 维度 ${SCENES.indexOf(scene) + 1}/5：${scene.name}（第 ${currentQ + 1}/20 题）`;
+    document.getElementById('sceneIntro').textContent = scene.intro;
+    document.getElementById('qText').textContent = q.text;
+    document.getElementById('quizTip').textContent = currentQ < 10 ? '💡 凭第一直觉选择，结果最准' : '🚀 马上测完，即将揭晓你该辞职还是该休息';
+    const optsEl = document.getElementById('opts');
+    optsEl.className = 'opts' + (q.options.length <= 3 ? ' cols-1' : '');
+    optsEl.innerHTML = q.options.map((o, i) =>
+      `<div class="opt ${answers[currentQ] === i ? 'selected' : ''}" data-i="${i}">
+        <span class="opt-emoji">${o.emoji}</span><span class="opt-label">${o.label}</span>
+      </div>`
+    ).join('');
+    optsEl.querySelectorAll('.opt').forEach(el => el.addEventListener('click', () => selectOption(+el.dataset.i)));
+    renderDots();
+    document.getElementById('btnPrev').disabled = currentQ === 0;
+    document.getElementById('btnNext').textContent = currentQ === TOTAL_Q - 1 ? '查看诊断报告 ✨' : '下一题 →';
+    document.getElementById('btnNext').disabled = answers[currentQ] === null;
+  }
+
+  function selectOption(idx) {
+    if (navigator.vibrate) navigator.vibrate(12);
+    answers[currentQ] = idx;
+    renderQuestion();
+    if (currentQ < TOTAL_Q - 1) setTimeout(() => { currentQ++; renderQuestion(); }, 320);
+    else if (answers.every(a => a !== null)) setTimeout(() => showReport(), 360);
+  }
+
+  function buildPrescription(dims, pct) {
+    const m = Object.fromEntries(dims.map(d => [d.id, d.ten]));
+    const envAvg = (m.money + m.growth + m.social) / 3;
+    const drainAvg = (m.time + m.mental) / 2;
+
+    if (envAvg >= 5.5 && drainAvg <= 4.5) {
+      return {
+        title: '🛌 结论：你现在不该裸辞，你只是【严重透支】该休息了！',
+        desc: '你的薪资、环境或发展底子其实不算差（环境分 ' + envAvg.toFixed(1) + '/10），但你的体力和心理电量已经快见底了（电量仅 ' + drainAvg.toFixed(1) + '/10）。你想逃离的根本不是这份工作，而是连续硬撑太久、快被榨干的自己！',
+        actions: [
+          '✅ 第一步：立刻请假 2～3 天连着周末睡个昏天黑地，别在电量 1% 时做辞职决定',
+          '✅ 第二步：下班后强制开启工作群免打扰，把准点下班当成头等大事',
+          '✅ 第三步：彻底休息一周后，如果提起上班不再胸闷，就继续稳稳拿这份工资'
+        ],
+        letterTitle: '🎭 给领导的《回血请假信》（可直接复制）',
+        letter: '领导好，最近连续高强度跟进项目，身体实在有些透支亮红灯了。为了不耽误后续进度，我想申请休假 3 天去医院调理并彻底休息一下，手头急事已交代妥当，充好电回来继续战斗！'
+      };
+    }
+    if (m.money >= 6.5 && drainAvg <= 4.2) {
+      return {
+        title: '💰 结论：高薪坐牢局——先别裸辞，把钱攒够再撤！',
+        desc: '这是一份典型的「拿命换钱」工作：经济回报高达 ' + m.money + '/10，但身心电量只剩 ' + drainAvg.toFixed(1) + '/10。裸辞会立刻断掉高现金流让你更焦虑，但硬撑会垮掉。',
+        actions: [
+          '✅ 第一步：给自己设一个「赎身攒钱倒计时」（比如再拿 3 个月工资或拿完年终奖就走）',
+          '✅ 第二步：从今天起只做及格线60分的工作，停止一切自我感动的额外付出',
+          '✅ 第三步：拿工资去买能让你爽的服务（按摩、打车、请假休息），用钱对冲精神损失'
+        ],
+        letterTitle: '🎭 给自己的《带薪回血备忘录》',
+        letter: '我来上班只是为了出租时间换取高额精神损失费，不是来卖命的。只要工资还在到账，老板的PUA就是耳边风。攒够目标金额，立刻潇洒走人！'
+      };
+    }
+    if (envAvg <= 4.2 && drainAvg <= 4.5) {
+      return {
+        title: '🏃 结论：别怀疑了，你该【准备辞职】！是这份工作在吸干你',
+        desc: '这不是休息两天能解决的问题——你的工作回报与环境分只有 ' + envAvg.toFixed(1) + '/10，身心电量也只剩 ' + drainAvg.toFixed(1) + '/10。钱少、事多、环境有毒全占了，继续耗着只会连跳槽的力气都被磨没。',
+        actions: [
+          '✅ 第一步：今天下班立刻开启「带薪摸鱼 + 改简历」模式，把精力100%收回来找下家',
+          '✅ 第二步：如果身体已经失眠心悸，哪怕裸辞休息一个月也比把自己熬进医院强',
+          '✅ 第三步：在拿到新 Offer 或决定走人那一刻前，不再为公司的烂摊子多熬一分钟'
+        ],
+        letterTitle: '🎭 给 HR 的《体面离职信》（可直接复制）',
+        letter: '您好！感谢公司这段时间的照顾。经过综合考虑个人职业规划与身体状态，我决定申请离职，预计最后工作日为下月X日。接下来我会配合做好工作交接，祝公司未来发展一切顺利！'
+      };
+    }
+    if (drainAvg >= 5.5 && (m.money <= 4.5 || m.growth <= 4.5)) {
+      return {
+        title: '🍵 结论：温水煮青蛙局——千万别裸辞，带薪搞副业/找下家！',
+        desc: '你现在并不算真正累垮（身心电量还有 ' + drainAvg.toFixed(1) + '/10），你烦躁是因为钱少或没奔头（回报/前景低）。这时候裸辞最亏，因为你白白放弃了一个能发工资的自习室！',
+        actions: [
+          '✅ 第一步：把主业当成保底饭票，用30%精力应付完交差',
+          '✅ 第二步：利用上班摸鱼和准点下班的时间，秘密投简历、学AI做副业或考证',
+          '✅ 第三步：等副业跑通或新 Offer 到手再无缝切换，绝不空窗期裸辞'
+        ],
+        letterTitle: '🎭 给自己的《骑驴找马行动书》',
+        letter: '这份工作虽然钱不多、没啥大前途，但它最大的优点是不至于把我累死。从今天起，公司就是我的带薪创业基地，先苟住发育，找到大马再换驴！'
+      };
+    }
+    return {
+      title: '🧘 结论：先休息调整！你的工作处于【比上不足比下有余】状态',
+      desc: '综合存活指数 ' + pct + ' 分。这份工作有让你烦躁的地方，但还没烂到必须立刻逃跑的程度。你现在的倦怠70%来自阶段性疲劳和情绪堆积。',
+      actions: [
+        '✅ 第一步：先请假或趁周末彻底断联休息2天，清空大脑里的垃圾情绪',
+        '✅ 第二步：把下面得分最低的那个维度单独拎出来，看看能不能通过沟通或摸鱼解决',
+        '✅ 第三步：一边稳住现有收入，一边不紧不慢地看外部机会，有更好的再跳'
+      ],
+      letterTitle: '🎭 给领导的《状态调整请假条》',
+      letter: '领导好，近期家里有点私事需要处理，顺便调整一下身体状态，申请周X请假一天，工作已提前安排妥当，收到请批复，感谢！'
+    };
+  }
+  function drawRadar(canvas, dims) {
+    const dpr = window.devicePixelRatio || 1;
+    const rect = canvas.getBoundingClientRect();
+    const W = rect.width || 300, H = rect.height || 270;
+    canvas.width = Math.round(W * dpr);
+    canvas.height = Math.round(H * dpr);
+    const ctx = canvas.getContext('2d');
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    ctx.clearRect(0, 0, W, H);
+    const cx = W / 2, cy = H / 2, maxR = Math.min(W, H) * 0.30, labelR = maxR + 26;
+    const n = dims.length, step = (Math.PI * 2) / n, start = -Math.PI / 2;
+
+    for (let lv = 1; lv <= 5; lv++) {
+      const r = (maxR / 5) * lv;
+      ctx.beginPath();
+      for (let i = 0; i < n; i++) {
+        const a = start + i * step;
+        i === 0 ? ctx.moveTo(cx + r * Math.cos(a), cy + r * Math.sin(a)) : ctx.lineTo(cx + r * Math.cos(a), cy + r * Math.sin(a));
+      }
+      ctx.closePath();
+      ctx.strokeStyle = 'rgba(255,255,255,0.12)'; ctx.stroke();
+    }
+    const pts = dims.map((d, i) => {
+      const a = start + i * step, r = (d.ten / 10) * maxR;
+      return { x: cx + r * Math.cos(a), y: cy + r * Math.sin(a) };
+    });
+    ctx.beginPath();
+    pts.forEach((p, i) => i === 0 ? ctx.moveTo(p.x, p.y) : ctx.lineTo(p.x, p.y));
+    ctx.closePath();
+    ctx.fillStyle = 'rgba(56, 189, 248, 0.28)'; ctx.fill();
+    ctx.strokeStyle = '#38bdf8'; ctx.lineWidth = 2; ctx.stroke();
+
+    ctx.fillStyle = '#fff';
+    ctx.font = '600 12px -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif';
+    dims.forEach((d, i) => {
+      const a = start + i * step;
+      const x = cx + labelR * Math.cos(a), y = cy + labelR * Math.sin(a);
+      ctx.textAlign = Math.abs(Math.cos(a)) < 0.2 ? 'center' : Math.cos(a) > 0 ? 'left' : 'right';
+      ctx.textBaseline = 'middle';
+      ctx.fillText(`${d.name} ${d.ten}`, x, y);
+    });
+  }
+
+  let lastCopyText = '';
+
+  function showReport() {
+    document.getElementById('quizView').classList.add('hidden');
+    const analyzing = document.getElementById('analyzing');
+    analyzing.classList.add('show');
+    setTimeout(() => {
+      analyzing.classList.remove('show');
+      const pct = toPercent(rawTotal());
+      const tier = getTier(pct);
+      const dims = SCENES.map(s => ({ ...s, ten: sceneToTen(s) }));
+      const rx = buildPrescription(dims, pct);
+
+      const ring = document.getElementById('resultRing');
+      ring.style.strokeDashoffset = RING_C * (1 - pct / 100);
+      ring.style.stroke = tier.color;
+      document.getElementById('resultScore').textContent = pct;
+      document.getElementById('verdictMain').textContent = tier.title;
+      const funEl = document.getElementById('verdictFun');
+      funEl.textContent = tier.fun;
+      funEl.style.color = tier.color;
+      funEl.style.border = `1px solid ${tier.color}66`;
+      document.getElementById('benchmark').textContent = `📊 你的职场存活状态超过了 ${Math.max(3, Math.min(98, pct))}% 的同龄打工人`;
+
+      document.getElementById('rxTitle').textContent = rx.title;
+      document.getElementById('rxDesc').textContent = rx.desc;
+      document.getElementById('rxList').innerHTML = rx.actions.map(a => `<li>${a}</li>`).join('');
+
+      document.getElementById('dimBars').innerHTML = dims.map((d, i) => `
+        <div class="dim-row">
+          <div class="dim-head"><span>${d.icon} ${d.name}</span><span>${d.ten} / 10</span></div>
+          <div class="bar-track"><div class="bar-fill" data-w="${d.ten * 10}" style="background:${BAR_COLORS[i]}"></div></div>
+        </div>`).join('');
+
+      const sorted = [...dims].sort((a, b) => b.ten - a.ten);
+      const best = sorted[0], worst = sorted[sorted.length - 1];
+      document.getElementById('insights').innerHTML = [
+        `💡 <strong>你目前最大的支撑点</strong>：【${best.name}】（${best.ten}/10），这是你还没彻底崩溃的核心缓冲垫。`,
+        `⚠️ <strong>最消耗你的致命短板</strong>：【${worst.name}】（${worst.ten}/10），你想逃离的念头 80% 都是被这一项逼出来的。`,
+        `🧭 <strong>去留判断金线</strong>：如果请假休息 3 天后【心理电量】能恢复，就别裸辞；如果一想到回去见那些人就生理性恶心，说明是【环境毒性】超标，尽早规划换地方。`
+      ].map(t => `<li>${t}</li>`).join('');
+
+      document.getElementById('letterHeading').textContent = rx.letterTitle;
+      document.getElementById('resignLetter').textContent = rx.letter;
+      lastCopyText = `【打工人状态深度诊断】\n职场存活指数：${pct}分（${tier.fun}）\n${rx.title}\n\n${rx.letter}`;
+
+      document.getElementById('resultView').classList.add('show');
+      requestAnimationFrame(() => {
+        drawRadar(document.getElementById('radarCanvas'), dims);
+        document.querySelectorAll('#dimBars .bar-fill').forEach(b => { b.style.width = b.dataset.w + '%'; });
+      });
+    }, 1200);
+  }
+
+  function toast(msg) {
+    const t = document.getElementById('toast');
+    t.textContent = msg; t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 2200);
+  }
+
+  document.getElementById('btnPrev').onclick = () => { if (currentQ > 0) { currentQ--; renderQuestion(); } };
+  document.getElementById('btnNext').onclick = () => {
+    if (answers[currentQ] === null) return;
+    if (currentQ === TOTAL_Q - 1) showReport();
+    else { currentQ++; renderQuestion(); }
+  };
+  document.getElementById('btnCopyAll').onclick = () => {
+    navigator.clipboard.writeText(lastCopyText).then(() => toast('✅ 已复制诊断报告与信件！')).catch(() => toast('✅ 复制成功'));
+  };
+  document.getElementById('btnRetest').onclick = () => {
+    answers = new Array(TOTAL_Q).fill(null); currentQ = 0;
+    document.getElementById('resultView').classList.remove('show');
+    document.getElementById('quizView').classList.remove('hidden');
+    renderQuestion();
+  };
+
+  renderQuestion();
+})();
+</script>
+</body>
+</html>
