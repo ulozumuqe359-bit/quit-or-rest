@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>下班后你最适合搞什么副业？· 零成本轻创业匹配度测评</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='20' fill='%23060818'/%3E%3Ctext x='50' y='68' font-size='52' text-anchor='middle'%3E%F0%9F%9A%80%3C/text%3E%3C/svg%3E">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --glass: rgba(255,255,255,0.08);
+      --border: rgba(255,255,255,0.15);
+      --text: #fff;
+      --muted: rgba(255,255,255,0.68);
+      --accent: #38bdf8;
+      --grad: linear-gradient(135deg, #0ea5e9, #6366f1);
+    }
+    html { -webkit-tap-highlight-color: transparent; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+      min-height: 100dvh; color: var(--text); background: #060818;
+      display: flex; justify-content: center; overflow-x: hidden;
+    }
+    .aurora { position: fixed; inset: 0; z-index: 0; overflow: hidden;
+      background: linear-gradient(160deg, #060818 0%, #111038 40%, #1f0a3d 75%, #2d0a2e 100%); }
+    .blob { position: absolute; border-radius: 50%; filter: blur(90px); opacity: 0.5; }
+    .blob-a { width: 80vw; height: 80vw; top: -20%; left: -20%; background: radial-gradient(circle, #0284c7, transparent 70%); }
+    .blob-b { width: 75vw; height: 75vw; bottom: -20%; right: -15%; background: radial-gradient(circle, #7e22ce, transparent 70%); }
+    .app { position: relative; z-index: 1; width: 100%; max-width: 480px; min-height: 100dvh;
+      display: flex; flex-direction: column; padding: 14px 16px 38px; }
+    .glass {
+      background: var(--glass); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+      border: 1px solid var(--border); border-radius: 20px;
+      box-shadow: 0 8px 32px rgba(0,0,0,.35), inset 0 1px 0 rgba(255,255,255,.12);
+    }
+    .page-header { text-align: center; padding: 18px 14px 14px; }
+    .badge-top { display: inline-block; background: rgba(251,191,36,0.18); color: #fcd34d; border: 1px solid rgba(251,191,36,0.4);
+      font-size: 0.74rem; font-weight: 700; padding: 3px 12px; border-radius: 999px; margin-bottom: 8px; }
+    .page-header h1 { font-size: 1.24rem; font-weight: 800; margin-bottom: 6px; line-height: 1.35; }
+    .page-header h1 span { color: var(--accent); }
+    .page-header p { font-size: 0.78rem; color: var(--muted); }
+
+    .quiz-view { flex: 1; display: flex; flex-direction: column; }
+    .quiz-view.hidden { display: none; }
+    .prog-line { text-align: center; font-size: 0.8rem; color: #fcd34d; font-weight: 700; margin-bottom: 10px; }
+    .q-card { flex: 1; display: flex; flex-direction: column; padding: 22px 16px; margin-bottom: 14px; }
+    .q-text { font-size: 1.05rem; font-weight: 700; line-height: 1.5; text-align: center; margin-bottom: 18px; }
+    .opts { display: flex; flex-direction: column; gap: 11px; }
+    .opt {
+      padding: 15px 14px; border-radius: 14px; background: rgba(255,255,255,0.06);
+      border: 1.5px solid rgba(255,255,255,0.13); cursor: pointer; font-size: 0.88rem;
+      font-weight: 600; line-height: 1.45; transition: all .18s; user-select: none;
+    }
+    .opt:hover { background: rgba(255,255,255,0.11); }
+    .opt.selected { background: rgba(251,191,36,0.22); border-color: var(--accent); color: #fef3c7; box-shadow: 0 0 16px rgba(251,191,36,0.25); }
+    .dots-wrap { display: flex; justify-content: center; gap: 6px; margin-bottom: 12px; }
+    .dot { width: 8px; height: 8px; border-radius: 50%; background: rgba(255,255,255,0.18); transition: all .25s; }
+    .dot.done { background: rgba(52,211,153,0.75); }
+    .dot.active { width: 22px; border-radius: 99px; background: var(--grad); }
+    .nav-bar { display: flex; gap: 10px; }
+    .btn {
+      flex: 1; padding: 13px 16px; border-radius: 14px; border: 1px solid var(--border);
+      background: rgba(255,255,255,0.07); color: #fff; font-size: 0.9rem; font-weight: 600; cursor: pointer;
+    }
+    .btn:disabled { opacity: 0.35; cursor: not-allowed; }
+    .btn-primary { background: var(--grad); border: none; }
+
+    .analyzing { display: none; text-align: center; padding: 48px 20px; margin: auto 0; }
+    .analyzing.show { display: block; }
+    .result-view { display: none; }
+    .result-view.show { display: block; }
+    .result-hero { text-align: center; padding: 24px 18px; margin-bottom: 14px; }
+    .ring-wrap { position: relative; width: 132px; height: 132px; margin: 0 auto 10px; }
+    .ring-wrap svg { width: 100%; height: 100%; transform: rotate(-90deg); }
+    .ring-bg { fill: none; stroke: rgba(255,255,255,0.1); stroke-width: 9; }
+    .ring-fg { fill: none; stroke: var(--accent); stroke-width: 9; stroke-linecap: round; transition: stroke-dashoffset 1s ease; }
+    .ring-num-wrap { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+    .ring-num { font-size: 2.2rem; font-weight: 900; line-height: 1; color: var(--accent); }
+    .ring-sub { font-size: 0.72rem; color: var(--muted); margin-top: 4px; }
+    .res-badge { display: inline-block; padding: 6px 16px; border-radius: 99px; background: var(--grad);
+      font-size: 0.9rem; font-weight: 800; margin: 8px 0; }
+    .res-detail { text-align: left; padding: 18px; margin-bottom: 14px; font-size: 0.86rem; line-height: 1.75; white-space: pre-line; }
+    .gift-card {
+      padding: 16px; margin-bottom: 14px; border-radius: 18px;
+      background: linear-gradient(135deg, rgba(52,211,153,0.16), rgba(56,189,248,0.16));
+      border: 1px solid rgba(52,211,153,0.45); font-size: 0.83rem; line-height: 1.6;
+    }
+    .gift-card strong { color: #6ee7b7; display: block; font-size: 0.92rem; margin-bottom: 4px; }
+    .btn-block { width: 100%; padding: 14px; border-radius: 14px; border: none; font-size: 0.92rem; font-weight: 700; cursor: pointer; margin-bottom: 10px; color: #fff; }
+  </style>
+</head>
+<body>
+  <div class="aurora"><div class="blob blob-a"></div><div class="blob blob-b"></div></div>
+  <div class="app">
+    <header class="page-header">
+      <div class="badge-top">打工人副业匹配测试</div>
+      <h1>你最适合搞什么<span>轻副业</span>？</h1>
+      <p>结合你的下班精力与性格底子，匹配最容易跑通的搞钱路径</p>
+    </header>
+
+    <div class="quiz-view" id="quizView">
+      <div class="prog-line" id="progLine"></div>
+      <div class="q-card glass">
+        <div class="q-text" id="qText"></div>
+        <div class="opts" id="opts"></div>
+      </div>
+      <div class="dots-wrap" id="dotsWrap"></div>
+      <div class="nav-bar">
+        <button class="btn" id="btnPrev">← 上一题</button>
+        <button class="btn btn-primary" id="btnNext">下一题 →</button>
+      </div>
+    </div>
+
+    <div class="analyzing glass" id="analyzing">
+      <div style="font-size:2.8rem;margin-bottom:12px">🔮</div>
+      <p>正在生成你的专属深度诊断报告...</p>
+    </div>
+
+    <div class="result-view" id="resultView">
+      <div class="result-hero glass">
+        <div class="ring-wrap">
+          <svg viewBox="0 0 120 120">
+            <circle class="ring-bg" cx="60" cy="60" r="52"></circle>
+            <circle class="ring-fg" id="resultRing" cx="60" cy="60" r="52" stroke-dasharray="326.73" stroke-dashoffset="326.73"></circle>
+          </svg>
+          <div class="ring-num-wrap">
+            <div class="ring-num" id="resultScore">0</div>
+            <div class="ring-sub">副业破局指数</div>
+          </div>
+        </div>
+        <div class="res-badge" id="resBadge"></div>
+        <div style="font-size:0.78rem;color:var(--muted)" id="rankTxt"></div>
+      </div>
+
+      <div class="res-detail glass" id="resDetail"></div>
+
+      <div class="gift-card">
+        <strong>🎁 专属隐藏福利：4 合 1 人生状态测评合集</strong>
+        截图本页诊断报告 + 订单确认收货 10 字好评，发给店铺客服即可免费领取价值 19.9 元的《全套打工人搞钱天赋 · 内耗指数 · 副业破局 · 离职去留测评合集》！
+      </div>
+
+      <button class="btn-block" style="background:var(--grad)" id="btnCopy">📤 复制我的诊断报告</button>
+      <button class="btn-block" style="background:rgba(255,255,255,0.1);border:1px solid var(--border)" id="btnRetest">🔄 重新测试</button>
+    </div>
+  </div>
+
+<script>
+const QUIZ_DATA = {
+  name: '🚀 下班轻副业与零成本破局测评',
+  qs: [
+    { q: '1. 你每天下班后能自由支配的清醒时间大约有多少？', opts: [
+      { t: '⏰ 2小时以上，周末双休时间充裕', s: 10 },
+      { t: '🌙 1小时左右，平时有点累但周末能整块搞', s: 7 },
+      { t: '🥀 不到半小时，下班只想瘫着，只能做全自动的事', s: 4 }
+    ]},
+    { q: '2. 你对在互联网上「露脸或出声拍视频」的态度是？', opts: [
+      { t: '🙅 绝对不想露脸，怕被同事熟人认出来，最好纯图文或AI代劳', s: 10 },
+      { t: '🎙️ 不露脸但可以配音录屏讲干货', s: 7 },
+      { t: '📹 只要能赚钱，出镜拍口播或直播完全没问题', s: 5 }
+    ]},
+    { q: '3. 你做副业能接受的启动成本底线是？', opts: [
+      { t: '💸 0元～100元以内（绝不压货、绝不花大钱投流买课）', s: 10 },
+      { t: '💰 1000元以内买必要的AI工具或样板', s: 7 },
+      { t: '🏦 几千上万也可以，只要回报高', s: 4 }
+    ]},
+    { q: '4. 下面三件事，你做哪一件最不觉得痛苦？', opts: [
+      { t: '📋 找网上卖得好的虚拟商品，用AI改写成自己的版本挂上去卖', s: 10 },
+      { t: '✍️ 把自己懂的经验写成图文教程或整理成资料包', s: 7 },
+      { t: '💬 陪客户一对一聊天解答问题、做咨询或接单', s: 4 }
+    ]},
+    { q: '5. 你希望副业通过什么方式成交收钱？', opts: [
+      { t: '🤖 平台24小时自动发货，睡着觉也能自动成交，0人工客服', s: 10 },
+      { t: '📦 客户拍下后我花十几分钟用AI生成交付给他', s: 7 },
+      { t: '🤝 加到微信私域里慢慢聊成高客单价大单', s: 5 }
+    ]},
+    { q: '6. 如果让你连续发小红书/抖音图文引流，你能做到？', opts: [
+      { t: '⚡ 用模板批量出图，每天花15分钟发1～2篇坚持一个月', s: 10 },
+      { t: '🎨 每周精心打磨2～3篇高质量长文', s: 7 },
+      { t: '😮‍💨 发两篇没人看就容易泄气断更', s: 4 }
+    ]},
+    { q: '7. 你目前最擅长或最感兴趣的工具是？', opts: [
+      { t: '🤖 ChatGPT / Claude / 各种AI生成工具，擅长让AI干活', s: 10 },
+      { t: '🖼️ Canva / 美图 / 剪映等排版剪辑工具', s: 7 },
+      { t: '📱 平时只用微信和办公软件，越简单越好', s: 4 }
+    ]},
+    { q: '8. 你做副业第一阶段（前30天）最真实的目标是？', opts: [
+      { t: '🎯 先跑通0到1，哪怕第一单只赚3.99元，验证能自动出单', s: 10 },
+      { t: '💵 第一个月稳定多赚1000～3000元补贴生活', s: 7 },
+      { t: '🚀 尽快超过主业工资，直接辞职单干', s: 4 }
+    ]},
+    { q: '9. 看到同行卖一个很简单的东西月入过万，你会？', opts: [
+      { t: '🔥 立刻花几块钱买一份他的产品，拆穿全流程今天就开始仿', s: 10 },
+      { t: '🤔 觉得太简单了没技术含量，想自己做个更高级的', s: 6 },
+      { t: '👀 觉得现在进去肯定晚了，看看就算了', s: 3 }
+    ]},
+    { q: '10. 如果今天就要你上架第一个副业商品，你最倾向于？', opts: [
+      { t: '🎁 网页测评 / Excel模板 / 简历AI指令包等0成本虚拟品', s: 10 },
+      { t: '🛠️ 帮人代写文案 / 代做PPT / 简历精修等轻服务', s: 7 },
+      { t: '🛍️ 无货源实物电商或带货分佣', s: 4 }
+    ]}
+  ],
+  eval: function(score) {
+    if (score >= 78) return {
+      badge: '🤖 AI 虚拟商品自动贩卖机（匹配度 98%）',
+      detail: '【最适合你的副业模式】：小红书 / 抖店「AI 虚拟商品 + 24小时自动发货矩阵」！\n\n【为什么天选适合你】：你不想露脸、不想被熟人发现、下班精力有限且厌恶人工扯皮。用AI生成「在线心理/职场测评网页」「电子表格模板」「AI提示词工具包」，托管在免费GitHub Pages或网盘，绑定自动发货，成本为0，做一次可以无限卖。\n\n【本周破局3步走】：\n1️⃣ 在店里挂上「3.99元单品测评（引流款）」+「19.9元全套测评合集（利润款）」。\n2️⃣ 每天用大字备忘录模板发2篇痛点自测图文笔记。\n3️⃣ 用「好评晒2张雷达图送合集」让买家帮你滚雪球裂变！'
+    };
+    if (score >= 55) return {
+      badge: '🛠️ AI 赋能轻咨询 / 标准化代做（匹配度 90%）',
+      detail: '【最适合你的副业模式】：「前端低价标准品引流 + 后端 AI 辅助定制服务」（如AI简历精修、职业规划报告定制、PPT/文案AI代写）。\n\n【为什么适合你】：你有耐心且具备不错的工具交付能力。先用3.99～9.9元的自动发货工具筛选出精准客户，再在报告结尾引导他们购买69～199元的1对1定制服务，你用AI在15分钟内完成交付，客单价和利润率极高！'
+    };
+    return {
+      badge: '🌱 爆款图文搬运工 · 零门槛带货/资料号（匹配度 85%）',
+      detail: '【最适合你的副业模式】：纯图文信息差资料号 / 垂直痛点合集号。\n\n【为什么适合你】：你目前下班后精力非常有限，最容易半途而废的是「自己搞创作」。千万别自己憋大招，直接找小红书上近7天低粉爆款的图文结构，用相同的标题公式和备忘录配图，挂载现成的虚拟资料包或测评商品，每天只花15分钟发完就去睡觉，先靠执行力拿到第一笔睡后收入！'
+    };
+  }
+};
+
+(function(){
+  const QS = QUIZ_DATA.qs;
+  const TOTAL = QS.length;
+  const RING_C = 2 * Math.PI * 52;
+  let cur = 0;
+  let ans = new Array(TOTAL).fill(null);
+
+  function render() {
+    document.getElementById('progLine').textContent = `第 ${cur + 1} / ${TOTAL} 题`;
+    document.getElementById('qText').textContent = QS[cur].q;
+    document.getElementById('opts').innerHTML = QS[cur].opts.map((o, i) =>
+      `<div class="opt ${ans[cur] === i ? 'selected' : ''}" data-i="${i}">${o.t}</div>`
+    ).join('');
+    document.querySelectorAll('.opt').forEach(el => el.onclick = () => pick(+el.dataset.i));
+    document.getElementById('dotsWrap').innerHTML = Array.from({length: TOTAL}, (_, i) =>
+      `<div class="dot ${i === cur ? 'active' : ans[i] !== null ? 'done' : ''}"></div>`
+    ).join('');
+    document.getElementById('btnPrev').disabled = cur === 0;
+    document.getElementById('btnNext').textContent = cur === TOTAL - 1 ? '查看诊断报告 ✨' : '下一题 →';
+    document.getElementById('btnNext').disabled = ans[cur] === null;
+  }
+
+  function pick(i) {
+    if (navigator.vibrate) navigator.vibrate(12);
+    ans[cur] = i;
+    render();
+    if (cur < TOTAL - 1) setTimeout(() => { cur++; render(); }, 300);
+    else if (ans.every(a => a !== null)) setTimeout(showReport, 340);
+  }
+
+  function showReport() {
+    document.getElementById('quizView').classList.add('hidden');
+    const an = document.getElementById('analyzing');
+    an.classList.add('show');
+    setTimeout(() => {
+      an.classList.remove('show');
+      const score = ans.reduce((s, a, idx) => s + QS[idx].opts[a].s, 0);
+      const r = QUIZ_DATA.eval(score);
+      document.getElementById('resultRing').style.strokeDashoffset = RING_C * (1 - score / 100);
+      document.getElementById('resultScore').textContent = score;
+      document.getElementById('resBadge').textContent = r.badge;
+      document.getElementById('rankTxt').textContent = `📊 你的该项指数超过了 ${Math.min(98, Math.max(12, score))}% 的测试者`;
+      document.getElementById('resDetail').textContent = r.detail;
+      document.getElementById('resultView').classList.add('show');
+      document.getElementById('btnCopy').onclick = () => {
+        navigator.clipboard.writeText(`【${QUIZ_DATA.name}】\\n得分：${score}分 · ${r.badge}\\n\\n${r.detail}`);
+        alert('✅ 已复制诊断报告！');
+      };
+    }, 1000);
+  }
+
+  document.getElementById('btnPrev').onclick = () => { if (cur > 0) { cur--; render(); } };
+  document.getElementById('btnNext').onclick = () => {
+    if (ans[cur] === null) return;
+    if (cur === TOTAL - 1) showReport(); else { cur++; render(); }
+  };
+  document.getElementById('btnRetest').onclick = () => {
+    ans = new Array(TOTAL).fill(null); cur = 0;
+    document.getElementById('resultView').classList.remove('show');
+    document.getElementById('quizView').classList.remove('hidden');
+    render();
+  };
+  render();
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>你靠什么最容易赚到钱？· 搞钱天赋与暴富原型测评</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='20' fill='%23060818'/%3E%3Ctext x='50' y='68' font-size='52' text-anchor='middle'%3E%F0%9F%92%B0%3C/text%3E%3C/svg%3E">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --glass: rgba(255,255,255,0.08);
+      --border: rgba(255,255,255,0.15);
+      --text: #fff;
+      --muted: rgba(255,255,255,0.68);
+      --accent: #fbbf24;
+      --grad: linear-gradient(135deg, #f59e0b, #d97706);
+    }
+    html { -webkit-tap-highlight-color: transparent; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+      min-height: 100dvh; color: var(--text); background: #060818;
+      display: flex; justify-content: center; overflow-x: hidden;
+    }
+    .aurora { position: fixed; inset: 0; z-index: 0; overflow: hidden;
+      background: linear-gradient(160deg, #060818 0%, #111038 40%, #1f0a3d 75%, #2d0a2e 100%); }
+    .blob { position: absolute; border-radius: 50%; filter: blur(90px); opacity: 0.5; }
+    .blob-a { width: 80vw; height: 80vw; top: -20%; left: -20%; background: radial-gradient(circle, #d97706, transparent 70%); }
+    .blob-b { width: 75vw; height: 75vw; bottom: -20%; right: -15%; background: radial-gradient(circle, #7c3aed, transparent 70%); }
+    .app { position: relative; z-index: 1; width: 100%; max-width: 480px; min-height: 100dvh;
+      display: flex; flex-direction: column; padding: 14px 16px 38px; }
+    .glass {
+      background: var(--glass); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+      border: 1px solid var(--border); border-radius: 20px;
+      box-shadow: 0 8px 32px rgba(0,0,0,.35), inset 0 1px 0 rgba(255,255,255,.12);
+    }
+    .page-header { text-align: center; padding: 18px 14px 14px; }
+    .badge-top { display: inline-block; background: rgba(251,191,36,0.18); color: #fcd34d; border: 1px solid rgba(251,191,36,0.4);
+      font-size: 0.74rem; font-weight: 700; padding: 3px 12px; border-radius: 999px; margin-bottom: 8px; }
+    .page-header h1 { font-size: 1.24rem; font-weight: 800; margin-bottom: 6px; line-height: 1.35; }
+    .page-header h1 span { color: var(--accent); }
+    .page-header p { font-size: 0.78rem; color: var(--muted); }
+
+    .quiz-view { flex: 1; display: flex; flex-direction: column; }
+    .quiz-view.hidden { display: none; }
+    .prog-line { text-align: center; font-size: 0.8rem; color: #fcd34d; font-weight: 700; margin-bottom: 10px; }
+    .q-card { flex: 1; display: flex; flex-direction: column; padding: 22px 16px; margin-bottom: 14px; }
+    .q-text { font-size: 1.05rem; font-weight: 700; line-height: 1.5; text-align: center; margin-bottom: 18px; }
+    .opts { display: flex; flex-direction: column; gap: 11px; }
+    .opt {
+      padding: 15px 14px; border-radius: 14px; background: rgba(255,255,255,0.06);
+      border: 1.5px solid rgba(255,255,255,0.13); cursor: pointer; font-size: 0.88rem;
+      font-weight: 600; line-height: 1.45; transition: all .18s; user-select: none;
+    }
+    .opt:hover { background: rgba(255,255,255,0.11); }
+    .opt.selected { background: rgba(251,191,36,0.22); border-color: var(--accent); color: #fef3c7; box-shadow: 0 0 16px rgba(251,191,36,0.25); }
+    .dots-wrap { display: flex; justify-content: center; gap: 6px; margin-bottom: 12px; }
+    .dot { width: 8px; height: 8px; border-radius: 50%; background: rgba(255,255,255,0.18); transition: all .25s; }
+    .dot.done { background: rgba(52,211,153,0.75); }
+    .dot.active { width: 22px; border-radius: 99px; background: var(--grad); }
+    .nav-bar { display: flex; gap: 10px; }
+    .btn {
+      flex: 1; padding: 13px 16px; border-radius: 14px; border: 1px solid var(--border);
+      background: rgba(255,255,255,0.07); color: #fff; font-size: 0.9rem; font-weight: 600; cursor: pointer;
+    }
+    .btn:disabled { opacity: 0.35; cursor: not-allowed; }
+    .btn-primary { background: var(--grad); border: none; }
+
+    .analyzing { display: none; text-align: center; padding: 48px 20px; margin: auto 0; }
+    .analyzing.show { display: block; }
+    .result-view { display: none; }
+    .result-view.show { display: block; }
+    .result-hero { text-align: center; padding: 24px 18px; margin-bottom: 14px; }
+    .ring-wrap { position: relative; width: 132px; height: 132px; margin: 0 auto 10px; }
+    .ring-wrap svg { width: 100%; height: 100%; transform: rotate(-90deg); }
+    .ring-bg { fill: none; stroke: rgba(255,255,255,0.1); stroke-width: 9; }
+    .ring-fg { fill: none; stroke: var(--accent); stroke-width: 9; stroke-linecap: round; transition: stroke-dashoffset 1s ease; }
+    .ring-num-wrap { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+    .ring-num { font-size: 2.2rem; font-weight: 900; line-height: 1; color: var(--accent); }
+    .ring-sub { font-size: 0.72rem; color: var(--muted); margin-top: 4px; }
+    .res-badge { display: inline-block; padding: 6px 16px; border-radius: 99px; background: var(--grad);
+      font-size: 0.9rem; font-weight: 800; margin: 8px 0; }
+    .res-detail { text-align: left; padding: 18px; margin-bottom: 14px; font-size: 0.86rem; line-height: 1.75; white-space: pre-line; }
+    .gift-card {
+      padding: 16px; margin-bottom: 14px; border-radius: 18px;
+      background: linear-gradient(135deg, rgba(52,211,153,0.16), rgba(56,189,248,0.16));
+      border: 1px solid rgba(52,211,153,0.45); font-size: 0.83rem; line-height: 1.6;
+    }
+    .gift-card strong { color: #6ee7b7; display: block; font-size: 0.92rem; margin-bottom: 4px; }
+    .btn-block { width: 100%; padding: 14px; border-radius: 14px; border: none; font-size: 0.92rem; font-weight: 700; cursor: pointer; margin-bottom: 10px; color: #fff; }
+  </style>
+</head>
+<body>
+  <div class="aurora"><div class="blob blob-a"></div><div class="blob blob-b"></div></div>
+  <div class="app">
+    <header class="page-header">
+      <div class="badge-top">打工人搞钱天赋测试</div>
+      <h1>你靠什么最容易<span>赚到钱</span>？</h1>
+      <p>测测你的搞钱原型与最不该碰的赚钱盲区</p>
+    </header>
+
+    <div class="quiz-view" id="quizView">
+      <div class="prog-line" id="progLine"></div>
+      <div class="q-card glass">
+        <div class="q-text" id="qText"></div>
+        <div class="opts" id="opts"></div>
+      </div>
+      <div class="dots-wrap" id="dotsWrap"></div>
+      <div class="nav-bar">
+        <button class="btn" id="btnPrev">← 上一题</button>
+        <button class="btn btn-primary" id="btnNext">下一题 →</button>
+      </div>
+    </div>
+
+    <div class="analyzing glass" id="analyzing">
+      <div style="font-size:2.8rem;margin-bottom:12px">🔮</div>
+      <p>正在生成你的专属深度诊断报告...</p>
+    </div>
+
+    <div class="result-view" id="resultView">
+      <div class="result-hero glass">
+        <div class="ring-wrap">
+          <svg viewBox="0 0 120 120">
+            <circle class="ring-bg" cx="60" cy="60" r="52"></circle>
+            <circle class="ring-fg" id="resultRing" cx="60" cy="60" r="52" stroke-dasharray="326.73" stroke-dashoffset="326.73"></circle>
+          </svg>
+          <div class="ring-num-wrap">
+            <div class="ring-num" id="resultScore">0</div>
+            <div class="ring-sub">搞钱潜能分</div>
+          </div>
+        </div>
+        <div class="res-badge" id="resBadge"></div>
+        <div style="font-size:0.78rem;color:var(--muted)" id="rankTxt"></div>
+      </div>
+
+      <div class="res-detail glass" id="resDetail"></div>
+
+      <div class="gift-card">
+        <strong>🎁 专属隐藏福利：4 合 1 人生状态测评合集</strong>
+        截图本页诊断报告 + 订单确认收货 10 字好评，发给店铺客服即可免费领取价值 19.9 元的《全套打工人搞钱天赋 · 内耗指数 · 副业破局 · 离职去留测评合集》！
+      </div>
+
+      <button class="btn-block" style="background:var(--grad)" id="btnCopy">📤 复制我的诊断报告</button>
+      <button class="btn-block" style="background:rgba(255,255,255,0.1);border:1px solid var(--border)" id="btnRetest">🔄 重新测试</button>
+    </div>
+  </div>
+
+<script>
+const QUIZ_DATA = {
+    name: '💰 搞钱天赋与暴富原型测评',
+    qs: [
+      { q: '1. 身边朋友遇到复杂问题向你求助时，你最擅长？', opts: [
+        { t: '💡 直接帮他拆解底层逻辑，给出1-2-3步方案', s: 10 },
+        { t: '🛠️ 自己动手帮他把难搞的技术/细节做好', s: 7 },
+        { t: '🗣️ 安抚他的情绪，帮他拉认识的熟人一起搞定', s: 4 }
+      ]},
+      { q: '2. 看到网上别人靠某个新副业赚了钱，你的第一反应是？', opts: [
+        { t: '🔍 立刻扒他的获客、转化和交付链条怎么跑通的', s: 10 },
+        { t: '📚 先买几本书或找教程把这门手艺学扎实', s: 7 },
+        { t: '🔥 拍个视频或发篇笔记试试有没有流量', s: 5 }
+      ]},
+      { q: '3. 如果让你支配1万元启动资金做个小生意，你会投在哪里？', opts: [
+        { t: '🤖 买AI工具和自动化软件，搭一套自动卖货系统', s: 10 },
+        { t: '🎨 打磨一个品质极高的产品或课程', s: 7 },
+        { t: '📢 投流推广或请同行吃饭换资源渠道', s: 5 }
+      ]},
+      { q: '4. 你平时最能坚持下来的事情通常是？', opts: [
+        { t: '📊 琢磨怎么用更少的时间拿到同样的结果（偷懒提效）', s: 10 },
+        { t: '✍️ 一个人安静地写东西、做图、改代码或钻研爱好', s: 7 },
+        { t: '📱 刷各个平台的爆款梗，跟人聊天互动', s: 5 }
+      ]},
+      { q: '5. 当有人向你买东西或付费咨询时，你心里的感受是？', opts: [
+        { t: '🎯 只要能帮他省时间或解决问题，收多少钱都理直气壮', s: 10 },
+        { t: '😳 总觉得自己准备得还不够完美，不好意思收高价', s: 6 },
+        { t: '🤝 更喜欢先交个朋友，抹不开面子谈钱', s: 4 }
+      ]},
+      { q: '6. 你最讨厌下面哪种赚钱方式？', opts: [
+        { t: '⏳ 纯靠出卖苦力时间、停下来就没收入的活', s: 10 },
+        { t: '🎭 天天要在镜头前表演、讨好观众', s: 7 },
+        { t: '📑 一个人闷头看枯燥的数据和文档', s: 4 }
+      ]},
+      { q: '7. 如果一个项目做了两周还没赚到钱，你会？', opts: [
+        { t: '🧭 立刻对照赚钱的对标找差异点，改价格或换流量入口', s: 10 },
+        { t: '🔧 觉得是自己产品还不够好，继续闷头改产品', s: 6 },
+        { t: '😮‍💨 怀疑这个赛道不行了，想换下一个新方向', s: 3 }
+      ]},
+      { q: '8. 你最羡慕下面哪种有钱人？', opts: [
+        { t: '🏝️ 拥有几台24小时自动发货的线上印钞机，人在哪都能赚', s: 10 },
+        { t: '🏆 在某个细分领域口碑极好，客户排着队找他定制', s: 7 },
+        { t: '🌟 几十万粉丝的网红博主，发条广告就赚几万', s: 5 }
+      ]},
+      { q: '9. 面对AI等新工具，你的使用习惯是？', opts: [
+        { t: '⚡ 直接让AI替我干掉80%的脏活累活，批量出成品去卖', s: 10 },
+        { t: '📖 认真研究提示词原理，追求每一次输出都很惊艳', s: 7 },
+        { t: '👀 收藏了很多教程，但平时很少真正用起来', s: 3 }
+      ]},
+      { q: '10. 你目前离赚到更多钱，觉得最缺的是？', opts: [
+        { t: '🚀 一个已经被验证过能赚钱的对标模板，直接照着抄', s: 10 },
+        { t: '🛡️ 突破完美主义，先把60分的付款链接挂出去的勇气', s: 7 },
+        { t: '🔋 下班后不被工作掏空的精力与专注时间', s: 4 }
+      ]}
+    ],
+    eval: function(score) {
+      if (score >= 82) return {
+        badge: '👑 军师操盘手 · 系统印钞型',
+        detail: '【你的搞钱原型】：天生的商业系统搭建者！你非常聪明，极度反感纯卖苦力，最擅长看穿别人靠什么赚钱，并利用AI、自动化工具把一件事变成「做一次卖一万次」的自动产线。\n\n【最适合你的暴富路径】：虚拟数字产品矩阵（测评/模板/指令库）、高客单咨询拆解、自动化小红书店铺。\n\n【避坑指南】：千万别去干需要24小时人工陪聊的低价苦力活，把精力放在「找对标 → 1:1复刻上架 → 放大流量」上！'
+      };
+      if (score >= 60) return {
+        badge: '💎 手艺变现家 · 专业复利型',
+        detail: '【你的搞钱原型】：闷声发财的实力派！你做事踏实、注重交付品质，不喜欢浮夸忽悠。只要把你的经验或AI技能包装成标准化产品，回头客和转介绍会非常稳。\n\n【最适合你的暴富路径】：垂直领域知识库/工具包、AI代做定制服务（建立标准SOP）、图文干货号引流变现。\n\n【避坑指南】：你最大的死穴是「完美主义拖延」——总想准备到100分再开始卖。记住：先挂出60分的付款链接收第一笔钱，边卖边改！'
+      };
+      return {
+        badge: '🌟 痛点共情者 · 借力破局型',
+        detail: '【你的搞钱原型】：高感知力的体验派！你对普通人的情绪、痛点非常敏锐，很容易看懂大家为什么焦虑、为什么买单。\n\n【最适合你的暴富路径】：情绪价值类虚拟产品（心理状态测试、解压指南、清醒语录图文号）、直接复制成熟同行的爆款封面与话术。\n\n【避坑指南】：不要自己从零发明商业模式！找一个已经在赚钱的同行，连他的定价、自动发货话术、封面排版一字不改地对齐模仿，先拿到正反馈！'
+      };
+    }
+  };
+
+(function(){
+  const QS = QUIZ_DATA.qs;
+  const TOTAL = QS.length;
+  const RING_C = 2 * Math.PI * 52;
+  let cur = 0;
+  let ans = new Array(TOTAL).fill(null);
+
+  function render() {
+    document.getElementById('progLine').textContent = `第 ${cur + 1} / ${TOTAL} 题`;
+    document.getElementById('qText').textContent = QS[cur].q;
+    document.getElementById('opts').innerHTML = QS[cur].opts.map((o, i) =>
+      `<div class="opt ${ans[cur] === i ? 'selected' : ''}" data-i="${i}">${o.t}</div>`
+    ).join('');
+    document.querySelectorAll('.opt').forEach(el => el.onclick = () => pick(+el.dataset.i));
+    document.getElementById('dotsWrap').innerHTML = Array.from({length: TOTAL}, (_, i) =>
+      `<div class="dot ${i === cur ? 'active' : ans[i] !== null ? 'done' : ''}"></div>`
+    ).join('');
+    document.getElementById('btnPrev').disabled = cur === 0;
+    document.getElementById('btnNext').textContent = cur === TOTAL - 1 ? '查看诊断报告 ✨' : '下一题 →';
+    document.getElementById('btnNext').disabled = ans[cur] === null;
+  }
+
+  function pick(i) {
+    if (navigator.vibrate) navigator.vibrate(12);
+    ans[cur] = i;
+    render();
+    if (cur < TOTAL - 1) setTimeout(() => { cur++; render(); }, 300);
+    else if (ans.every(a => a !== null)) setTimeout(showReport, 340);
+  }
+
+  function showReport() {
+    document.getElementById('quizView').classList.add('hidden');
+    const an = document.getElementById('analyzing');
+    an.classList.add('show');
+    setTimeout(() => {
+      an.classList.remove('show');
+      const score = ans.reduce((s, a, idx) => s + QS[idx].opts[a].s, 0);
+      const r = QUIZ_DATA.eval(score);
+      document.getElementById('resultRing').style.strokeDashoffset = RING_C * (1 - score / 100);
+      document.getElementById('resultScore').textContent = score;
+      document.getElementById('resBadge').textContent = r.badge;
+      document.getElementById('rankTxt').textContent = `📊 你的该项指数超过了 ${Math.min(98, Math.max(12, score))}% 的测试者`;
+      document.getElementById('resDetail').textContent = r.detail;
+      document.getElementById('resultView').classList.add('show');
+      document.getElementById('btnCopy').onclick = () => {
+        navigator.clipboard.writeText(`【${QUIZ_DATA.name}】\\n得分：${score}分 · ${r.badge}\\n\\n${r.detail}`);
+        alert('✅ 已复制诊断报告！');
+      };
+    }, 1000);
+  }
+
+  document.getElementById('btnPrev').onclick = () => { if (cur > 0) { cur--; render(); } };
+  document.getElementById('btnNext').onclick = () => {
+    if (ans[cur] === null) return;
+    if (cur === TOTAL - 1) showReport(); else { cur++; render(); }
+  };
+  document.getElementById('btnRetest').onclick = () => {
+    ans = new Array(TOTAL).fill(null); cur = 0;
+    document.getElementById('resultView').classList.remove('show');
+    document.getElementById('quizView').classList.remove('hidden');
+    render();
+  };
+  render();
+})();
+</script>
+</body>
+</html>

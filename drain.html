@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>你的精神内耗有多严重？· 情绪漏电与高敏感深度测评</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='20' fill='%23060818'/%3E%3Ctext x='50' y='68' font-size='52' text-anchor='middle'%3E%F0%9F%A7%A0%3C/text%3E%3C/svg%3E">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --glass: rgba(255,255,255,0.08);
+      --border: rgba(255,255,255,0.15);
+      --text: #fff;
+      --muted: rgba(255,255,255,0.68);
+      --accent: #f472b6;
+      --grad: linear-gradient(135deg, #ec4899, #8b5cf6);
+    }
+    html { -webkit-tap-highlight-color: transparent; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+      min-height: 100dvh; color: var(--text); background: #060818;
+      display: flex; justify-content: center; overflow-x: hidden;
+    }
+    .aurora { position: fixed; inset: 0; z-index: 0; overflow: hidden;
+      background: linear-gradient(160deg, #060818 0%, #111038 40%, #1f0a3d 75%, #2d0a2e 100%); }
+    .blob { position: absolute; border-radius: 50%; filter: blur(90px); opacity: 0.5; }
+    .blob-a { width: 80vw; height: 80vw; top: -20%; left: -20%; background: radial-gradient(circle, #db2777, transparent 70%); }
+    .blob-b { width: 75vw; height: 75vw; bottom: -20%; right: -15%; background: radial-gradient(circle, #4f46e5, transparent 70%); }
+    .app { position: relative; z-index: 1; width: 100%; max-width: 480px; min-height: 100dvh;
+      display: flex; flex-direction: column; padding: 14px 16px 38px; }
+    .glass {
+      background: var(--glass); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+      border: 1px solid var(--border); border-radius: 20px;
+      box-shadow: 0 8px 32px rgba(0,0,0,.35), inset 0 1px 0 rgba(255,255,255,.12);
+    }
+    .page-header { text-align: center; padding: 18px 14px 14px; }
+    .badge-top { display: inline-block; background: rgba(251,191,36,0.18); color: #fcd34d; border: 1px solid rgba(251,191,36,0.4);
+      font-size: 0.74rem; font-weight: 700; padding: 3px 12px; border-radius: 999px; margin-bottom: 8px; }
+    .page-header h1 { font-size: 1.24rem; font-weight: 800; margin-bottom: 6px; line-height: 1.35; }
+    .page-header h1 span { color: var(--accent); }
+    .page-header p { font-size: 0.78rem; color: var(--muted); }
+
+    .quiz-view { flex: 1; display: flex; flex-direction: column; }
+    .quiz-view.hidden { display: none; }
+    .prog-line { text-align: center; font-size: 0.8rem; color: #fcd34d; font-weight: 700; margin-bottom: 10px; }
+    .q-card { flex: 1; display: flex; flex-direction: column; padding: 22px 16px; margin-bottom: 14px; }
+    .q-text { font-size: 1.05rem; font-weight: 700; line-height: 1.5; text-align: center; margin-bottom: 18px; }
+    .opts { display: flex; flex-direction: column; gap: 11px; }
+    .opt {
+      padding: 15px 14px; border-radius: 14px; background: rgba(255,255,255,0.06);
+      border: 1.5px solid rgba(255,255,255,0.13); cursor: pointer; font-size: 0.88rem;
+      font-weight: 600; line-height: 1.45; transition: all .18s; user-select: none;
+    }
+    .opt:hover { background: rgba(255,255,255,0.11); }
+    .opt.selected { background: rgba(251,191,36,0.22); border-color: var(--accent); color: #fef3c7; box-shadow: 0 0 16px rgba(251,191,36,0.25); }
+    .dots-wrap { display: flex; justify-content: center; gap: 6px; margin-bottom: 12px; }
+    .dot { width: 8px; height: 8px; border-radius: 50%; background: rgba(255,255,255,0.18); transition: all .25s; }
+    .dot.done { background: rgba(52,211,153,0.75); }
+    .dot.active { width: 22px; border-radius: 99px; background: var(--grad); }
+    .nav-bar { display: flex; gap: 10px; }
+    .btn {
+      flex: 1; padding: 13px 16px; border-radius: 14px; border: 1px solid var(--border);
+      background: rgba(255,255,255,0.07); color: #fff; font-size: 0.9rem; font-weight: 600; cursor: pointer;
+    }
+    .btn:disabled { opacity: 0.35; cursor: not-allowed; }
+    .btn-primary { background: var(--grad); border: none; }
+
+    .analyzing { display: none; text-align: center; padding: 48px 20px; margin: auto 0; }
+    .analyzing.show { display: block; }
+    .result-view { display: none; }
+    .result-view.show { display: block; }
+    .result-hero { text-align: center; padding: 24px 18px; margin-bottom: 14px; }
+    .ring-wrap { position: relative; width: 132px; height: 132px; margin: 0 auto 10px; }
+    .ring-wrap svg { width: 100%; height: 100%; transform: rotate(-90deg); }
+    .ring-bg { fill: none; stroke: rgba(255,255,255,0.1); stroke-width: 9; }
+    .ring-fg { fill: none; stroke: var(--accent); stroke-width: 9; stroke-linecap: round; transition: stroke-dashoffset 1s ease; }
+    .ring-num-wrap { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+    .ring-num { font-size: 2.2rem; font-weight: 900; line-height: 1; color: var(--accent); }
+    .ring-sub { font-size: 0.72rem; color: var(--muted); margin-top: 4px; }
+    .res-badge { display: inline-block; padding: 6px 16px; border-radius: 99px; background: var(--grad);
+      font-size: 0.9rem; font-weight: 800; margin: 8px 0; }
+    .res-detail { text-align: left; padding: 18px; margin-bottom: 14px; font-size: 0.86rem; line-height: 1.75; white-space: pre-line; }
+    .gift-card {
+      padding: 16px; margin-bottom: 14px; border-radius: 18px;
+      background: linear-gradient(135deg, rgba(52,211,153,0.16), rgba(56,189,248,0.16));
+      border: 1px solid rgba(52,211,153,0.45); font-size: 0.83rem; line-height: 1.6;
+    }
+    .gift-card strong { color: #6ee7b7; display: block; font-size: 0.92rem; margin-bottom: 4px; }
+    .btn-block { width: 100%; padding: 14px; border-radius: 14px; border: none; font-size: 0.92rem; font-weight: 700; cursor: pointer; margin-bottom: 10px; color: #fff; }
+  </style>
+</head>
+<body>
+  <div class="aurora"><div class="blob blob-a"></div><div class="blob blob-b"></div></div>
+  <div class="app">
+    <header class="page-header">
+      <div class="badge-top">精神内耗指数测试</div>
+      <h1>你的<span>精神内耗</span>有多严重？</h1>
+      <p>为什么你没干多少活却累得要命？揪出你的情绪漏电口</p>
+    </header>
+
+    <div class="quiz-view" id="quizView">
+      <div class="prog-line" id="progLine"></div>
+      <div class="q-card glass">
+        <div class="q-text" id="qText"></div>
+        <div class="opts" id="opts"></div>
+      </div>
+      <div class="dots-wrap" id="dotsWrap"></div>
+      <div class="nav-bar">
+        <button class="btn" id="btnPrev">← 上一题</button>
+        <button class="btn btn-primary" id="btnNext">下一题 →</button>
+      </div>
+    </div>
+
+    <div class="analyzing glass" id="analyzing">
+      <div style="font-size:2.8rem;margin-bottom:12px">🔮</div>
+      <p>正在生成你的专属深度诊断报告...</p>
+    </div>
+
+    <div class="result-view" id="resultView">
+      <div class="result-hero glass">
+        <div class="ring-wrap">
+          <svg viewBox="0 0 120 120">
+            <circle class="ring-bg" cx="60" cy="60" r="52"></circle>
+            <circle class="ring-fg" id="resultRing" cx="60" cy="60" r="52" stroke-dasharray="326.73" stroke-dashoffset="326.73"></circle>
+          </svg>
+          <div class="ring-num-wrap">
+            <div class="ring-num" id="resultScore">0</div>
+            <div class="ring-sub">内耗耗电指数</div>
+          </div>
+        </div>
+        <div class="res-badge" id="resBadge"></div>
+        <div style="font-size:0.78rem;color:var(--muted)" id="rankTxt"></div>
+      </div>
+
+      <div class="res-detail glass" id="resDetail"></div>
+
+      <div class="gift-card">
+        <strong>🎁 专属隐藏福利：4 合 1 人生状态测评合集</strong>
+        截图本页诊断报告 + 订单确认收货 10 字好评，发给店铺客服即可免费领取价值 19.9 元的《全套打工人搞钱天赋 · 内耗指数 · 副业破局 · 离职去留测评合集》！
+      </div>
+
+      <button class="btn-block" style="background:var(--grad)" id="btnCopy">📤 复制我的诊断报告</button>
+      <button class="btn-block" style="background:rgba(255,255,255,0.1);border:1px solid var(--border)" id="btnRetest">🔄 重新测试</button>
+    </div>
+  </div>
+
+<script>
+const QUIZ_DATA = {
+  name: '🧠 精神内耗与情绪漏电深度诊断',
+  qs: [
+    { q: '1. 在微信群里发了一句话半天没人接，你会？', opts: [
+      { t: '😰 反复点开看自己是不是说错话了，恨不得撤回', s: 10 },
+      { t: '🤔 稍微有点尴尬，但过一会儿就忘了', s: 5 },
+      { t: '😎 完全无所谓，大家可能在忙', s: 2 }
+    ]},
+    { q: '2. 别人找你帮忙，其实你手里很忙或者不想帮，你会？', opts: [
+      { t: '😣 嘴上硬着头皮答应，心里委屈烦躁一整天', s: 10 },
+      { t: '⏳ 找个借口拖延一下，纠结半天怎么回绝', s: 6 },
+      { t: '🙅 直接温和拒绝，先顾好自己的事', s: 2 }
+    ]},
+    { q: '3. 晚上躺在床上准备睡觉时，你的大脑通常是？', opts: [
+      { t: '🌀 像放电影一样复盘白天别人的一句脸色，越想越清醒', s: 10 },
+      { t: '📱 必须刷手机刷到困极了才敢闭眼，怕闲下来胡思乱想', s: 7 },
+      { t: '😴 沾枕头没几分钟就睡着了', s: 2 }
+    ]},
+    { q: '4. 领导或客户回了一句「嗯」或者「来我办公室一趟」，你会？', opts: [
+      { t: '💓 心跳瞬间加速，脑补出10种自己犯错被批的画面', s: 10 },
+      { t: '😐 先翻翻聊天记录看看是什么事，稍微有点紧张', s: 5 },
+      { t: '🚶 去了再说，天塌不下来', s: 2 }
+    ]},
+    { q: '5. 当你想做一件事（比如换工作、搞副业、发作品）时？', opts: [
+      { t: '📝 在脑子里推演了100种失败和被熟人笑话的可能，迟迟没动手', s: 10 },
+      { t: '🔍 查了一堆资料收藏夹吃灰，做了一半又怀疑没用', s: 6 },
+      { t: '⚡ 先干出来扔出去看看反馈再说', s: 2 }
+    ]},
+    { q: '6. 周末明明在家里躺了整整两天没出门，到了周日晚上感觉？', opts: [
+      { t: '🥀 比上班还累，心里充满荒废时间的负罪感和对周一的恐惧', s: 10 },
+      { t: '😮‍💨 身体不累了，但心里还是空落落的', s: 6 },
+      { t: '🔋 睡饱吃好，满血复活', s: 2 }
+    ]},
+    { q: '7. 当别人夸你或者给你取得一点成绩时，你的第一反应是？', opts: [
+      { t: '😥 觉得只是运气好，害怕下次做不好让人失望', s: 10 },
+      { t: '😊 嘴上谦虚一下，心里还是挺开心的', s: 5 },
+      { t: '🏆 我本来就干得漂亮，应得的', s: 2 }
+    ]},
+    { q: '8. 和别人发生小摩擦或被冒犯时，你通常会？', opts: [
+      { t: '🤐 当场没发挥好忍气吞声，事后深夜在脑子里骂他八百遍', s: 10 },
+      { t: '😤 当场脸色不好看，回来跟朋友吐槽完就散了', s: 5 },
+      { t: '⚔️ 当场怼回去或者根本不把烂人放心里', s: 2 }
+    ]},
+    { q: '9. 你的手机消息提示音平时是什么状态？', opts: [
+      { t: '🔕 常年静音，但又忍不住每隔几分钟解锁看一眼怕漏掉消息', s: 10 },
+      { t: '📳 开震动，工作时间看，下班尽量不看', s: 5 },
+      { t: '🔔 该响就响，不想回的放着明天再回', s: 2 }
+    ]},
+    { q: '10. 你觉得自己每天精力的分配比例是？', opts: [
+      { t: '💔 30%在干活，70%在纠结、担忧、看别人眼色和自我攻击', s: 10 },
+      { t: '⚖️ 一半干活，一半偶尔焦虑内耗', s: 6 },
+      { t: '💪 80%以上都花在具体的事情和自己的生活上', s: 2 }
+    ]}
+  ],
+  eval: function(score) {
+    if (score >= 75) return {
+      badge: '🚨 重度精神内耗 · 24小时后台漏电王',
+      detail: '【内耗诊断】：你的大脑就像后台同时开了50个高耗电App的手机！你明明没干多少体力活，却每天累到虚脱，因为你把70%的能量都花在了「揣测别人脸色」「讨好与委屈」「在脑子里预演还没发生的灾难」上。\n\n【3个立刻止损的戒断动作】：\n1️⃣ 课题分离口诀：别人怎么看你、开不开心，那是他的课题，不是你的考卷。\n2️⃣ 5秒行动法则：想发作品、想拒绝别人时，倒数5-4-3-2-1直接发出，不给大脑编造恐惧剧本的时间。\n3️⃣ 设立每日「胡思乱想专用时间」：白天出现焦虑念头先记在备忘录，告诉自己「晚上8点再统一焦虑」，到点你会发现90%的事根本懒得想了。'
+    };
+    if (score >= 45) return {
+      badge: '⚠️ 中度情绪过载 · 隐形讨好者',
+      detail: '【内耗诊断】：你在熟人和安全环境里很正常，但一遇到职场权威、冲突或不确定性，就会开启「自我怀疑与过度思虑」模式。你习惯把责任往自己身上揽，休息时还带着负罪感。\n\n【3个回血处方】：\n1️⃣ 允许自己当个「60分及格的人」：不管是上班还是回消息，敷衍一点天塌不下来。\n2️⃣ 每天练习拒绝一件小事：从「今天不想拼单」「下班有事不加班」开始夺回边界。\n3️⃣ 用「做成一件具体小事」（比如散步20分钟、上架一个商品）替代躺在床上空想。'
+    };
+    return {
+      badge: '🛡️ 反内耗满级大佬 · 情绪防弹衣',
+      detail: '【内耗诊断】：恭喜！你的精神内核非常稳固，拥有极强的「钝感力」和清晰的边界感。你很少为烂人烂事消耗自己，电量几乎全部用在解决实际问题和享受生活上，请继续保持这份清醒！'
+    };
+  }
+};
+
+(function(){
+  const QS = QUIZ_DATA.qs;
+  const TOTAL = QS.length;
+  const RING_C = 2 * Math.PI * 52;
+  let cur = 0;
+  let ans = new Array(TOTAL).fill(null);
+
+  function render() {
+    document.getElementById('progLine').textContent = `第 ${cur + 1} / ${TOTAL} 题`;
+    document.getElementById('qText').textContent = QS[cur].q;
+    document.getElementById('opts').innerHTML = QS[cur].opts.map((o, i) =>
+      `<div class="opt ${ans[cur] === i ? 'selected' : ''}" data-i="${i}">${o.t}</div>`
+    ).join('');
+    document.querySelectorAll('.opt').forEach(el => el.onclick = () => pick(+el.dataset.i));
+    document.getElementById('dotsWrap').innerHTML = Array.from({length: TOTAL}, (_, i) =>
+      `<div class="dot ${i === cur ? 'active' : ans[i] !== null ? 'done' : ''}"></div>`
+    ).join('');
+    document.getElementById('btnPrev').disabled = cur === 0;
+    document.getElementById('btnNext').textContent = cur === TOTAL - 1 ? '查看诊断报告 ✨' : '下一题 →';
+    document.getElementById('btnNext').disabled = ans[cur] === null;
+  }
+
+  function pick(i) {
+    if (navigator.vibrate) navigator.vibrate(12);
+    ans[cur] = i;
+    render();
+    if (cur < TOTAL - 1) setTimeout(() => { cur++; render(); }, 300);
+    else if (ans.every(a => a !== null)) setTimeout(showReport, 340);
+  }
+
+  function showReport() {
+    document.getElementById('quizView').classList.add('hidden');
+    const an = document.getElementById('analyzing');
+    an.classList.add('show');
+    setTimeout(() => {
+      an.classList.remove('show');
+      const score = ans.reduce((s, a, idx) => s + QS[idx].opts[a].s, 0);
+      const r = QUIZ_DATA.eval(score);
+      document.getElementById('resultRing').style.strokeDashoffset = RING_C * (1 - score / 100);
+      document.getElementById('resultScore').textContent = score;
+      document.getElementById('resBadge').textContent = r.badge;
+      document.getElementById('rankTxt').textContent = `📊 你的该项指数超过了 ${Math.min(98, Math.max(12, score))}% 的测试者`;
+      document.getElementById('resDetail').textContent = r.detail;
+      document.getElementById('resultView').classList.add('show');
+      document.getElementById('btnCopy').onclick = () => {
+        navigator.clipboard.writeText(`【${QUIZ_DATA.name}】\\n得分：${score}分 · ${r.badge}\\n\\n${r.detail}`);
+        alert('✅ 已复制诊断报告！');
+      };
+    }, 1000);
+  }
+
+  document.getElementById('btnPrev').onclick = () => { if (cur > 0) { cur--; render(); } };
+  document.getElementById('btnNext').onclick = () => {
+    if (ans[cur] === null) return;
+    if (cur === TOTAL - 1) showReport(); else { cur++; render(); }
+  };
+  document.getElementById('btnRetest').onclick = () => {
+    ans = new Array(TOTAL).fill(null); cur = 0;
+    document.getElementById('resultView').classList.remove('show');
+    document.getElementById('quizView').classList.remove('hidden');
+    render();
+  };
+  render();
+})();
+</script>
+</body>
+</html>

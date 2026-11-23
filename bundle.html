@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>打工人人生状态测评合集 · VIP 尊享版（4合1）</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='20' fill='%23060818'/%3E%3Ctext x='50' y='68' font-size='52' text-anchor='middle'%3E%F0%9F%8E%81%3C/text%3E%3C/svg%3E">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --glass: rgba(255,255,255,0.08);
+      --border: rgba(255,255,255,0.15);
+      --text: #fff;
+      --muted: rgba(255,255,255,0.68);
+      --gold: #fbbf24;
+      --grad: linear-gradient(135deg, #f59e0b, #ec4899, #8b5cf6);
+    }
+    html { -webkit-tap-highlight-color: transparent; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+      min-height: 100dvh; color: var(--text); background: #060818;
+      display: flex; justify-content: center; overflow-x: hidden;
+    }
+    .aurora { position: fixed; inset: 0; z-index: 0; overflow: hidden;
+      background: linear-gradient(160deg, #060818 0%, #111038 40%, #1f0a3d 75%, #2d0a2e 100%); }
+    .blob { position: absolute; border-radius: 50%; filter: blur(90px); opacity: 0.5; }
+    .blob-a { width: 80vw; height: 80vw; top: -20%; left: -20%; background: radial-gradient(circle, #4f46e5, transparent 70%); }
+    .blob-b { width: 75vw; height: 75vw; bottom: -20%; right: -15%; background: radial-gradient(circle, #db2777, transparent 70%); }
+    .app { position: relative; z-index: 1; width: 100%; max-width: 480px; min-height: 100dvh;
+      display: flex; flex-direction: column; padding: 16px 16px 40px; }
+    .glass {
+      background: var(--glass); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+      border: 1px solid var(--border); border-radius: 20px;
+      box-shadow: 0 8px 32px rgba(0,0,0,.35), inset 0 1px 0 rgba(255,255,255,.12);
+    }
+    .vip-header { text-align: center; padding: 22px 16px; margin-bottom: 16px;
+      background: linear-gradient(135deg, rgba(251,191,36,0.18), rgba(236,72,153,0.15));
+      border: 1px solid rgba(251,191,36,0.45); border-radius: 22px; }
+    .vip-badge { display: inline-block; background: #fbbf24; color: #1e1b4b; font-size: 0.72rem;
+      font-weight: 800; padding: 3px 12px; border-radius: 99px; margin-bottom: 8px; }
+    .vip-header h1 { font-size: 1.28rem; font-weight: 900; color: #fef3c7; margin-bottom: 6px; }
+    .vip-header p { font-size: 0.78rem; color: rgba(255,255,255,0.8); line-height: 1.5; }
+
+    .hub-list { display: flex; flex-direction: column; gap: 14px; }
+    .test-card {
+      padding: 18px; border-radius: 18px; cursor: pointer; transition: transform .18s, border-color .18s;
+      display: flex; flex-direction: column; gap: 10px; position: relative; overflow: hidden;
+    }
+    .test-card:hover { transform: translateY(-2px); border-color: rgba(251,191,36,0.65); }
+    .card-top { display: flex; justify-content: space-between; align-items: center; }
+    .card-tag { font-size: 0.72rem; font-weight: 700; padding: 3px 10px; border-radius: 99px; }
+    .card-price { font-size: 0.75rem; color: #6ee7b7; font-weight: 700; }
+    .card-title { font-size: 1.08rem; font-weight: 800; line-height: 1.35; }
+    .card-desc { font-size: 0.8rem; color: var(--muted); line-height: 1.55; }
+    .card-btn {
+      align-self: flex-start; margin-top: 2px; padding: 8px 16px; border-radius: 10px;
+      border: none; font-size: 0.82rem; font-weight: 700; color: #fff; cursor: pointer;
+    }
+
+    .view { display: none; flex-direction: column; flex: 1; }
+    .view.active { display: flex; }
+    .top-bar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
+    .btn-back { background: rgba(255,255,255,0.1); border: 1px solid var(--border); color: #fff;
+      padding: 7px 14px; border-radius: 10px; font-size: 0.8rem; font-weight: 600; cursor: pointer; }
+    .prog-txt { font-size: 0.8rem; color: #fcd34d; font-weight: 700; }
+    .q-box { padding: 22px 16px; margin-bottom: 14px; flex: 1; display: flex; flex-direction: column; }
+    .q-title { font-size: 1.05rem; font-weight: 700; line-height: 1.5; margin-bottom: 18px; text-align: center; }
+    .opt-list { display: flex; flex-direction: column; gap: 10px; }
+    .opt-item {
+      padding: 14px; border-radius: 14px; background: rgba(255,255,255,0.06);
+      border: 1.5px solid rgba(255,255,255,0.12); cursor: pointer; font-size: 0.88rem;
+      font-weight: 600; line-height: 1.45; transition: all .18s; display: flex; align-items: center; gap: 10px;
+    }
+    .opt-item:hover { background: rgba(255,255,255,0.12); }
+    .opt-item.selected { background: rgba(251,191,36,0.22); border-color: #fbbf24; color: #fef3c7; }
+    .res-box { padding: 24px 18px; margin-bottom: 14px; text-align: center; }
+    .res-score { font-size: 3rem; font-weight: 900; color: #fbbf24; line-height: 1; margin: 10px 0 6px; }
+    .res-badge { display: inline-block; padding: 5px 16px; border-radius: 99px; background: var(--grad);
+      font-size: 0.88rem; font-weight: 800; margin-bottom: 14px; }
+    .res-detail { text-align: left; background: rgba(0,0,0,0.28); padding: 16px; border-radius: 14px;
+      font-size: 0.85rem; line-height: 1.7; color: rgba(255,255,255,0.92); margin-bottom: 14px; white-space: pre-line; }
+    .btn-full { width: 100%; padding: 14px; border-radius: 14px; border: none; font-size: 0.92rem;
+      font-weight: 700; color: #fff; cursor: pointer; margin-bottom: 10px; background: var(--grad); }
+  </style>
+</head>
+<body>
+  <div class="aurora">
+    <div class="blob blob-a"></div>
+    <div class="blob blob-b"></div>
+  </div>
+  <div class="app">
+    <!-- 大厅首页 -->
+    <div class="view active" id="hubView">
+      <div class="vip-header">
+        <span class="vip-badge">✨ 价值 ¥19.9 · VIP 尊享完整版</span>
+        <h1>打工人人生状态测评合集</h1>
+        <p>已为您解锁全部 4 套深度测评，点击任意卡片即可无限次免费开测</p>
+      </div>
+
+      <div class="hub-list">
+        <div class="test-card glass" onclick="startQuiz('wealth')">
+          <div class="card-top">
+            <span class="card-tag" style="background:rgba(251,191,36,0.2);color:#fde68a">💰 搞钱天赋测评</span>
+            <span class="card-price">已解锁 · 10道题</span>
+          </div>
+          <div class="card-title">1. 你靠什么最容易赚到钱？搞钱原型与暴富盲区测试</div>
+          <div class="card-desc">测出你是「军师操盘型」「手艺变现型」「流量IP型」还是「资源套利型」，看清你最不该碰的赚钱死穴。</div>
+          <button class="card-btn" style="background:linear-gradient(135deg,#f59e0b,#d97706)">立即开测 →</button>
+        </div>
+
+        <div class="test-card glass" onclick="startQuiz('drain')">
+          <div class="card-top">
+            <span class="card-tag" style="background:rgba(244,114,182,0.2);color:#fbcfe8">🧠 精神内耗测评</span>
+            <span class="card-price">已解锁 · 10道题</span>
+          </div>
+          <div class="card-title">2. 你的精神内耗指数有多高？讨好型与高敏感深度诊断</div>
+          <div class="card-desc">为什么你明明没干多少活却累得要命？精准定位你的「情绪漏电口」，附停止胡思乱想的 3 个戒断动作。</div>
+          <button class="card-btn" style="background:linear-gradient(135deg,#ec4899,#be185d)">立即开测 →</button>
+        </div>
+
+        <div class="test-card glass" onclick="startQuiz('side')">
+          <div class="card-top">
+            <span class="card-tag" style="background:rgba(56,189,248,0.2);color:#bae6fd">🚀 副业破局测评</span>
+            <span class="card-price">已解锁 · 10道题</span>
+          </div>
+          <div class="card-title">3. 下班后你最适合搞什么副业？零成本轻创业匹配度测试</div>
+          <div class="card-desc">结合你的下班精力、抗风险力与技能底子，帮你避开割韭菜项目，匹配最适合你起步的 1 个轻副业方向。</div>
+          <button class="card-btn" style="background:linear-gradient(135deg,#0ea5e9,#4f46e5)">立即开测 →</button>
+        </div>
+
+        <div class="test-card glass" onclick="location.href='index.html'">
+          <div class="card-top">
+            <span class="card-tag" style="background:rgba(52,211,153,0.2);color:#a7f3d0">🚪 职场去留测评</span>
+            <span class="card-price">已解锁 · 20道题</span>
+          </div>
+          <div class="card-title">4. 你该辞职，还是该休息？职场透支与五维雷达深度诊断</div>
+          <div class="card-desc">交叉比对你的「工作环境毒性」与「身心透支程度」，告诉你现在该请假睡三天还是立刻改简历跑路。</div>
+          <button class="card-btn" style="background:linear-gradient(135deg,#10b981,#059669)">进入测评 →</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 答题视图 -->
+    <div class="view" id="quizView">
+      <div class="top-bar">
+        <button class="btn-back" onclick="backToHub()">← 返回合集大厅</button>
+        <span class="prog-txt" id="progTxt">1 / 10</span>
+      </div>
+      <div class="q-box glass">
+        <div class="q-title" id="qTitle"></div>
+        <div class="opt-list" id="optList"></div>
+      </div>
+    </div>
+
+    <!-- 结果视图 -->
+    <div class="view" id="resView">
+      <div class="top-bar">
+        <button class="btn-back" onclick="backToHub()">← 返回合集测下一套</button>
+      </div>
+      <div class="res-box glass">
+        <div style="font-size:0.8rem;color:var(--muted)" id="resTestName"></div>
+        <div class="res-score" id="resScore"></div>
+        <div class="res-badge" id="resBadge"></div>
+        <div class="res-detail" id="resDetail"></div>
+        <button class="btn-full" onclick="backToHub()">🎁 返回大厅继续测其他项目</button>
+      </div>
+    </div>
+  </div>
+<script>
+const DB = {
+  wealth: {
+    name: '💰 搞钱天赋与暴富原型测评',
+    qs: [
+      { q: '1. 身边朋友遇到复杂问题向你求助时，你最擅长？', opts: [
+        { t: '💡 直接帮他拆解底层逻辑，给出1-2-3步方案', s: 10 },
+        { t: '🛠️ 自己动手帮他把难搞的技术/细节做好', s: 7 },
+        { t: '🗣️ 安抚他的情绪，帮他拉认识的熟人一起搞定', s: 4 }
+      ]},
+      { q: '2. 看到网上别人靠某个新副业赚了钱，你的第一反应是？', opts: [
+        { t: '🔍 立刻扒他的获客、转化和交付链条怎么跑通的', s: 10 },
+        { t: '📚 先买几本书或找教程把这门手艺学扎实', s: 7 },
+        { t: '🔥 拍个视频或发篇笔记试试有没有流量', s: 5 }
+      ]},
+      { q: '3. 如果让你支配1万元启动资金做个小生意，你会投在哪里？', opts: [
+        { t: '🤖 买AI工具和自动化软件，搭一套自动卖货系统', s: 10 },
+        { t: '🎨 打磨一个品质极高的产品或课程', s: 7 },
+        { t: '📢 投流推广或请同行吃饭换资源渠道', s: 5 }
+      ]},
+      { q: '4. 你平时最能坚持下来的事情通常是？', opts: [
+        { t: '📊 琢磨怎么用更少的时间拿到同样的结果（偷懒提效）', s: 10 },
+        { t: '✍️ 一个人安静地写东西、做图、改代码或钻研爱好', s: 7 },
+        { t: '📱 刷各个平台的爆款梗，跟人聊天互动', s: 5 }
+      ]},
+      { q: '5. 当有人向你买东西或付费咨询时，你心里的感受是？', opts: [
+        { t: '🎯 只要能帮他省时间或解决问题，收多少钱都理直气壮', s: 10 },
+        { t: '😳 总觉得自己准备得还不够完美，不好意思收高价', s: 6 },
+        { t: '🤝 更喜欢先交个朋友，抹不开面子谈钱', s: 4 }
+      ]},
+      { q: '6. 你最讨厌下面哪种赚钱方式？', opts: [
+        { t: '⏳ 纯靠出卖苦力时间、停下来就没收入的活', s: 10 },
+        { t: '🎭 天天要在镜头前表演、讨好观众', s: 7 },
+        { t: '📑 一个人闷头看枯燥的数据和文档', s: 4 }
+      ]},
+      { q: '7. 如果一个项目做了两周还没赚到钱，你会？', opts: [
+        { t: '🧭 立刻对照赚钱的对标找差异点，改价格或换流量入口', s: 10 },
+        { t: '🔧 觉得是自己产品还不够好，继续闷头改产品', s: 6 },
+        { t: '😮‍💨 怀疑这个赛道不行了，想换下一个新方向', s: 3 }
+      ]},
+      { q: '8. 你最羡慕下面哪种有钱人？', opts: [
+        { t: '🏝️ 拥有几台24小时自动发货的线上印钞机，人在哪都能赚', s: 10 },
+        { t: '🏆 在某个细分领域口碑极好，客户排着队找他定制', s: 7 },
+        { t: '🌟 几十万粉丝的网红博主，发条广告就赚几万', s: 5 }
+      ]},
+      { q: '9. 面对AI等新工具，你的使用习惯是？', opts: [
+        { t: '⚡ 直接让AI替我干掉80%的脏活累活，批量出成品去卖', s: 10 },
+        { t: '📖 认真研究提示词原理，追求每一次输出都很惊艳', s: 7 },
+        { t: '👀 收藏了很多教程，但平时很少真正用起来', s: 3 }
+      ]},
+      { q: '10. 你目前离赚到更多钱，觉得最缺的是？', opts: [
+        { t: '🚀 一个已经被验证过能赚钱的对标模板，直接照着抄', s: 10 },
+        { t: '🛡️ 突破完美主义，先把60分的付款链接挂出去的勇气', s: 7 },
+        { t: '🔋 下班后不被工作掏空的精力与专注时间', s: 4 }
+      ]}
+    ],
+    eval: function(score) {
+      if (score >= 82) return {
+        badge: '👑 军师操盘手 · 系统印钞型',
+        detail: '【你的搞钱原型】：天生的商业系统搭建者！你非常聪明，极度反感纯卖苦力，最擅长看穿别人靠什么赚钱，并利用AI、自动化工具把一件事变成「做一次卖一万次」的自动产线。\n\n【最适合你的暴富路径】：虚拟数字产品矩阵（测评/模板/指令库）、高客单咨询拆解、自动化小红书店铺。\n\n【避坑指南】：千万别去干需要24小时人工陪聊的低价苦力活，把精力放在「找对标 → 1:1复刻上架 → 放大流量」上！'
+      };
+      if (score >= 60) return {
+        badge: '💎 手艺变现家 · 专业复利型',
+        detail: '【你的搞钱原型】：闷声发财的实力派！你做事踏实、注重交付品质，不喜欢浮夸忽悠。只要把你的经验或AI技能包装成标准化产品，回头客和转介绍会非常稳。\n\n【最适合你的暴富路径】：垂直领域知识库/工具包、AI代做定制服务（建立标准SOP）、图文干货号引流变现。\n\n【避坑指南】：你最大的死穴是「完美主义拖延」——总想准备到100分再开始卖。记住：先挂出60分的付款链接收第一笔钱，边卖边改！'
+      };
+      return {
+        badge: '🌟 痛点共情者 · 借力破局型',
+        detail: '【你的搞钱原型】：高感知力的体验派！你对普通人的情绪、痛点非常敏锐，很容易看懂大家为什么焦虑、为什么买单。\n\n【最适合你的暴富路径】：情绪价值类虚拟产品（心理状态测试、解压指南、清醒语录图文号）、直接复制成熟同行的爆款封面与话术。\n\n【避坑指南】：不要自己从零发明商业模式！找一个已经在赚钱的同行，连他的定价、自动发货话术、封面排版一字不改地对齐模仿，先拿到正反馈！'
+      };
+    }
+  }
+};
+</script>
+<script>
+DB.drain = {
+  name: '🧠 精神内耗与情绪漏电深度诊断',
+  qs: [
+    { q: '1. 在微信群里发了一句话半天没人接，你会？', opts: [
+      { t: '😰 反复点开看自己是不是说错话了，恨不得撤回', s: 10 },
+      { t: '🤔 稍微有点尴尬，但过一会儿就忘了', s: 5 },
+      { t: '😎 完全无所谓，大家可能在忙', s: 2 }
+    ]},
+    { q: '2. 别人找你帮忙，其实你手里很忙或者不想帮，你会？', opts: [
+      { t: '😣 嘴上硬着头皮答应，心里委屈烦躁一整天', s: 10 },
+      { t: '⏳ 找个借口拖延一下，纠结半天怎么回绝', s: 6 },
+      { t: '🙅 直接温和拒绝，先顾好自己的事', s: 2 }
+    ]},
+    { q: '3. 晚上躺在床上准备睡觉时，你的大脑通常是？', opts: [
+      { t: '🌀 像放电影一样复盘白天别人的一句脸色，越想越清醒', s: 10 },
+      { t: '📱 必须刷手机刷到困极了才敢闭眼，怕闲下来胡思乱想', s: 7 },
+      { t: '😴 沾枕头没几分钟就睡着了', s: 2 }
+    ]},
+    { q: '4. 领导或客户回了一句「嗯」或者「来我办公室一趟」，你会？', opts: [
+      { t: '💓 心跳瞬间加速，脑补出10种自己犯错被批的画面', s: 10 },
+      { t: '😐 先翻翻聊天记录看看是什么事，稍微有点紧张', s: 5 },
+      { t: '🚶 去了再说，天塌不下来', s: 2 }
+    ]},
+    { q: '5. 当你想做一件事（比如换工作、搞副业、发作品）时？', opts: [
+      { t: '📝 在脑子里推演了100种失败和被熟人笑话的可能，迟迟没动手', s: 10 },
+      { t: '🔍 查了一堆资料收藏夹吃灰，做了一半又怀疑没用', s: 6 },
+      { t: '⚡ 先干出来扔出去看看反馈再说', s: 2 }
+    ]},
+    { q: '6. 周末明明在家里躺了整整两天没出门，到了周日晚上感觉？', opts: [
+      { t: '🥀 比上班还累，心里充满荒废时间的负罪感和对周一的恐惧', s: 10 },
+      { t: '😮‍💨 身体不累了，但心里还是空落落的', s: 6 },
+      { t: '🔋 睡饱吃好，满血复活', s: 2 }
+    ]},
+    { q: '7. 当别人夸你或者给你取得一点成绩时，你的第一反应是？', opts: [
+      { t: '😥 觉得只是运气好，害怕下次做不好让人失望', s: 10 },
+      { t: '😊 嘴上谦虚一下，心里还是挺开心的', s: 5 },
+      { t: '🏆 我本来就干得漂亮，应得的', s: 2 }
+    ]},
+    { q: '8. 和别人发生小摩擦或被冒犯时，你通常会？', opts: [
+      { t: '🤐 当场没发挥好忍气吞声，事后深夜在脑子里骂他八百遍', s: 10 },
+      { t: '😤 当场脸色不好看，回来跟朋友吐槽完就散了', s: 5 },
+      { t: '⚔️ 当场怼回去或者根本不把烂人放心里', s: 2 }
+    ]},
+    { q: '9. 你的手机消息提示音平时是什么状态？', opts: [
+      { t: '🔕 常年静音，但又忍不住每隔几分钟解锁看一眼怕漏掉消息', s: 10 },
+      { t: '📳 开震动，工作时间看，下班尽量不看', s: 5 },
+      { t: '🔔 该响就响，不想回的放着明天再回', s: 2 }
+    ]},
+    { q: '10. 你觉得自己每天精力的分配比例是？', opts: [
+      { t: '💔 30%在干活，70%在纠结、担忧、看别人眼色和自我攻击', s: 10 },
+      { t: '⚖️ 一半干活，一半偶尔焦虑内耗', s: 6 },
+      { t: '💪 80%以上都花在具体的事情和自己的生活上', s: 2 }
+    ]}
+  ],
+  eval: function(score) {
+    if (score >= 75) return {
+      badge: '🚨 重度精神内耗 · 24小时后台漏电王',
+      detail: '【内耗诊断】：你的大脑就像后台同时开了50个高耗电App的手机！你明明没干多少体力活，却每天累到虚脱，因为你把70%的能量都花在了「揣测别人脸色」「讨好与委屈」「在脑子里预演还没发生的灾难」上。\n\n【3个立刻止损的戒断动作】：\n1️⃣ 课题分离口诀：别人怎么看你、开不开心，那是他的课题，不是你的考卷。\n2️⃣ 5秒行动法则：想发作品、想拒绝别人时，倒数5-4-3-2-1直接发出，不给大脑编造恐惧剧本的时间。\n3️⃣ 设立每日「胡思乱想专用时间」：白天出现焦虑念头先记在备忘录，告诉自己「晚上8点再统一焦虑」，到点你会发现90%的事根本懒得想了。'
+    };
+    if (score >= 45) return {
+      badge: '⚠️ 中度情绪过载 · 隐形讨好者',
+      detail: '【内耗诊断】：你在熟人和安全环境里很正常，但一遇到职场权威、冲突或不确定性，就会开启「自我怀疑与过度思虑」模式。你习惯把责任往自己身上揽，休息时还带着负罪感。\n\n【3个回血处方】：\n1️⃣ 允许自己当个「60分及格的人」：不管是上班还是回消息，敷衍一点天塌不下来。\n2️⃣ 每天练习拒绝一件小事：从「今天不想拼单」「下班有事不加班」开始夺回边界。\n3️⃣ 用「做成一件具体小事」（比如散步20分钟、上架一个商品）替代躺在床上空想。'
+    };
+    return {
+      badge: '🛡️ 反内耗满级大佬 · 情绪防弹衣',
+      detail: '【内耗诊断】：恭喜！你的精神内核非常稳固，拥有极强的「钝感力」和清晰的边界感。你很少为烂人烂事消耗自己，电量几乎全部用在解决实际问题和享受生活上，请继续保持这份清醒！'
+    };
+  }
+};
+</script>
+<script>
+DB.side = {
+  name: '🚀 下班轻副业与零成本破局测评',
+  qs: [
+    { q: '1. 你每天下班后能自由支配的清醒时间大约有多少？', opts: [
+      { t: '⏰ 2小时以上，周末双休时间充裕', s: 10 },
+      { t: '🌙 1小时左右，平时有点累但周末能整块搞', s: 7 },
+      { t: '🥀 不到半小时，下班只想瘫着，只能做全自动的事', s: 4 }
+    ]},
+    { q: '2. 你对在互联网上「露脸或出声拍视频」的态度是？', opts: [
+      { t: '🙅 绝对不想露脸，怕被同事熟人认出来，最好纯图文或AI代劳', s: 10 },
+      { t: '🎙️ 不露脸但可以配音录屏讲干货', s: 7 },
+      { t: '📹 只要能赚钱，出镜拍口播或直播完全没问题', s: 5 }
+    ]},
+    { q: '3. 你做副业能接受的启动成本底线是？', opts: [
+      { t: '💸 0元～100元以内（绝不压货、绝不花大钱投流买课）', s: 10 },
+      { t: '💰 1000元以内买必要的AI工具或样板', s: 7 },
+      { t: '🏦 几千上万也可以，只要回报高', s: 4 }
+    ]},
+    { q: '4. 下面三件事，你做哪一件最不觉得痛苦？', opts: [
+      { t: '📋 找网上卖得好的虚拟商品，用AI改写成自己的版本挂上去卖', s: 10 },
+      { t: '✍️ 把自己懂的经验写成图文教程或整理成资料包', s: 7 },
+      { t: '💬 陪客户一对一聊天解答问题、做咨询或接单', s: 4 }
+    ]},
+    { q: '5. 你希望副业通过什么方式成交收钱？', opts: [
+      { t: '🤖 平台24小时自动发货，睡着觉也能自动成交，0人工客服', s: 10 },
+      { t: '📦 客户拍下后我花十几分钟用AI生成交付给他', s: 7 },
+      { t: '🤝 加到微信私域里慢慢聊成高客单价大单', s: 5 }
+    ]},
+    { q: '6. 如果让你连续发小红书/抖音图文引流，你能做到？', opts: [
+      { t: '⚡ 用模板批量出图，每天花15分钟发1～2篇坚持一个月', s: 10 },
+      { t: '🎨 每周精心打磨2～3篇高质量长文', s: 7 },
+      { t: '😮‍💨 发两篇没人看就容易泄气断更', s: 4 }
+    ]},
+    { q: '7. 你目前最擅长或最感兴趣的工具是？', opts: [
+      { t: '🤖 ChatGPT / Claude / 各种AI生成工具，擅长让AI干活', s: 10 },
+      { t: '🖼️ Canva / 美图 / 剪映等排版剪辑工具', s: 7 },
+      { t: '📱 平时只用微信和办公软件，越简单越好', s: 4 }
+    ]},
+    { q: '8. 你做副业第一阶段（前30天）最真实的目标是？', opts: [
+      { t: '🎯 先跑通0到1，哪怕第一单只赚3.99元，验证能自动出单', s: 10 },
+      { t: '💵 第一个月稳定多赚1000～3000元补贴生活', s: 7 },
+      { t: '🚀 尽快超过主业工资，直接辞职单干', s: 4 }
+    ]},
+    { q: '9. 看到同行卖一个很简单的东西月入过万，你会？', opts: [
+      { t: '🔥 立刻花几块钱买一份他的产品，拆穿全流程今天就开始仿', s: 10 },
+      { t: '🤔 觉得太简单了没技术含量，想自己做个更高级的', s: 6 },
+      { t: '👀 觉得现在进去肯定晚了，看看就算了', s: 3 }
+    ]},
+    { q: '10. 如果今天就要你上架第一个副业商品，你最倾向于？', opts: [
+      { t: '🎁 网页测评 / Excel模板 / 简历AI指令包等0成本虚拟品', s: 10 },
+      { t: '🛠️ 帮人代写文案 / 代做PPT / 简历精修等轻服务', s: 7 },
+      { t: '🛍️ 无货源实物电商或带货分佣', s: 4 }
+    ]}
+  ],
+  eval: function(score) {
+    if (score >= 78) return {
+      badge: '🤖 AI 虚拟商品自动贩卖机（匹配度 98%）',
+      detail: '【最适合你的副业模式】：小红书 / 抖店「AI 虚拟商品 + 24小时自动发货矩阵」！\n\n【为什么天选适合你】：你不想露脸、不想被熟人发现、下班精力有限且厌恶人工扯皮。用AI生成「在线心理/职场测评网页」「电子表格模板」「AI提示词工具包」，托管在免费GitHub Pages或网盘，绑定自动发货，成本为0，做一次可以无限卖。\n\n【本周破局3步走】：\n1️⃣ 在店里挂上「3.99元单品测评（引流款）」+「19.9元全套测评合集（利润款）」。\n2️⃣ 每天用大字备忘录模板发2篇痛点自测图文笔记。\n3️⃣ 用「好评晒2张雷达图送合集」让买家帮你滚雪球裂变！'
+    };
+    if (score >= 55) return {
+      badge: '🛠️ AI 赋能轻咨询 / 标准化代做（匹配度 90%）',
+      detail: '【最适合你的副业模式】：「前端低价标准品引流 + 后端 AI 辅助定制服务」（如AI简历精修、职业规划报告定制、PPT/文案AI代写）。\n\n【为什么适合你】：你有耐心且具备不错的工具交付能力。先用3.99～9.9元的自动发货工具筛选出精准客户，再在报告结尾引导他们购买69～199元的1对1定制服务，你用AI在15分钟内完成交付，客单价和利润率极高！'
+    };
+    return {
+      badge: '🌱 爆款图文搬运工 · 零门槛带货/资料号（匹配度 85%）',
+      detail: '【最适合你的副业模式】：纯图文信息差资料号 / 垂直痛点合集号。\n\n【为什么适合你】：你目前下班后精力非常有限，最容易半途而废的是「自己搞创作」。千万别自己憋大招，直接找小红书上近7天低粉爆款的图文结构，用相同的标题公式和备忘录配图，挂载现成的虚拟资料包或测评商品，每天只花15分钟发完就去睡觉，先靠执行力拿到第一笔睡后收入！'
+    };
+  }
+};
+
+let curKey = 'wealth', curIdx = 0, curScore = 0;
+
+function showView(id) {
+  document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  window.scrollTo(0, 0);
+}
+
+function startQuiz(key) {
+  curKey = key; curIdx = 0; curScore = 0;
+  showView('quizView');
+  renderQ();
+}
+
+function renderQ() {
+  const test = DB[curKey];
+  const item = test.qs[curIdx];
+  document.getElementById('progTxt').textContent = `${test.name} · 第 ${curIdx + 1} / ${test.qs.length} 题`;
+  document.getElementById('qTitle').textContent = item.q;
+  const list = document.getElementById('optList');
+  list.innerHTML = item.opts.map((o, i) =>
+    `<div class="opt-item" onclick="pickOpt(${o.s}, this)">${o.t}</div>`
+  ).join('');
+}
+
+function pickOpt(s, el) {
+  if (navigator.vibrate) navigator.vibrate(12);
+  el.classList.add('selected');
+  curScore += s;
+  setTimeout(() => {
+    if (curIdx < DB[curKey].qs.length - 1) {
+      curIdx++;
+      renderQ();
+    } else {
+      showRes();
+    }
+  }, 260);
+}
+
+function showRes() {
+  const test = DB[curKey];
+  const r = test.eval(curScore);
+  document.getElementById('resTestName').textContent = test.name + ' · 诊断报告';
+  document.getElementById('resScore').textContent = curScore + ' 分';
+  document.getElementById('resBadge').textContent = r.badge;
+  document.getElementById('resDetail').textContent = r.detail;
+  showView('resView');
+}
+
+function backToHub() { showView('hubView'); }
+</script>
+</body>
+</html>
